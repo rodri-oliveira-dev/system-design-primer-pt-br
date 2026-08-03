@@ -1,0 +1,349 @@
+name: Aplicar tradução pt-BR de cache e assincronismo
+
+on:
+  push:
+    branches:
+      - docs/pt-br-translation
+    paths:
+      - .github/workflows/translate-cache-pt-br.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply-translation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout da branch de tradução
+        uses: actions/checkout@v4
+        with:
+          ref: docs/pt-br-translation
+
+      - name: Aplicar tradução e ajustes
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          readme_path = Path("README-pt-BR.md")
+          contributing_path = Path("CONTRIBUTING-pt-BR.md")
+
+          readme = readme_path.read_text(encoding="utf-8")
+
+          replacements = {
+              "https://github.com/donnemartin/interactive-coding-challenges/tree/master/anki_cards/Coding.apkg)\n\nÓtimo para estudar": "https://github.com/donnemartin/system-design-primer/tree/master/resources/flash_cards/OO%20Design.apkg)\n\nÓtimo para estudar",
+              "* [Cache](README.md#cache)": "* [Cache](#cache)",
+              "    * [Cache no cliente](README.md#client-caching)": "    * [Cache no cliente](#cache-no-cliente)",
+              "    * [Cache em CDN](README.md#cdn-caching)": "    * [Cache em CDN](#cache-em-cdn)",
+              "    * [Cache no servidor web](README.md#web-server-caching)": "    * [Cache no servidor web](#cache-no-servidor-web)",
+              "    * [Cache no banco de dados](README.md#database-caching)": "    * [Cache no banco de dados](#cache-no-banco-de-dados)",
+              "    * [Cache na aplicação](README.md#application-caching)": "    * [Cache na aplicação](#cache-na-aplicacao)",
+              "    * [Cache no nível de consulta ao banco de dados](README.md#caching-at-the-database-query-level)": "    * [Cache no nível de consulta ao banco de dados](#cache-no-nivel-de-consulta-ao-banco-de-dados)",
+              "    * [Cache no nível de objeto](README.md#caching-at-the-object-level)": "    * [Cache no nível de objeto](#cache-no-nivel-de-objeto)",
+              "    * [Quando atualizar o cache](README.md#when-to-update-the-cache)": "    * [Quando atualizar o cache](#quando-atualizar-o-cache)",
+              "        * [Cache-aside](README.md#cache-aside)": "        * [Cache-aside](#cache-aside)",
+              "        * [Write-through](README.md#write-through)": "        * [Write-through](#write-through)",
+              "        * [Write-behind — write-back](README.md#write-behind-write-back)": "        * [Write-behind — write-back](#write-behind-write-back)",
+              "        * [Refresh-ahead](README.md#refresh-ahead)": "        * [Refresh-ahead](#refresh-ahead)",
+              "* [Assincronismo](README.md#asynchronism)": "* [Assincronismo](#assincronismo)",
+              "    * [Filas de mensagens](README.md#message-queues)": "    * [Filas de mensagens](#filas-de-mensagens)",
+              "    * [Filas de tarefas](README.md#task-queues)": "    * [Filas de tarefas](#filas-de-tarefas)",
+              "    * [Backpressure](README.md#back-pressure)": "    * [Backpressure](#backpressure)",
+              "um [cache](README.md#cache) persistente": "um [cache](#cache) persistente",
+              "viabilizar o [assincronismo](README.md#asynchronism)": "viabilizar o [assincronismo](#assincronismo)",
+          }
+
+          for old, new in replacements.items():
+              if old not in readme:
+                  raise RuntimeError(f"Trecho esperado não encontrado: {old}")
+              readme = readme.replace(old, new, 1)
+
+          marker = "\n## Status da tradução\n"
+          if marker not in readme:
+              raise RuntimeError("Marcador de status não encontrado")
+          if "<a id=\"cache\"></a>" in readme:
+              raise RuntimeError("A seção de cache já foi adicionada")
+
+          translated = r'''
+<a id="cache"></a>
+## Cache
+
+<p align="center">
+  <img src="images/Q6z24La.png">
+  <br/>
+  <i><a href="http://horicky.blogspot.com/2010/10/scalable-system-design-patterns.html">Fonte: Scalable system design patterns</a></i>
+</p>
+
+O uso de cache melhora o tempo de carregamento das páginas e pode reduzir a carga sobre servidores e bancos de dados. Nesse modelo, o componente responsável por despachar a requisição verifica primeiro se ela já foi realizada e tenta localizar um resultado anterior para devolvê-lo, evitando uma nova execução.
+
+Bancos de dados normalmente se beneficiam de uma distribuição uniforme de leituras e escritas entre suas partições. Itens populares podem desequilibrar essa distribuição e causar gargalos. Colocar um cache à frente do banco de dados ajuda a absorver cargas desiguais e picos de tráfego.
+
+<a id="cache-no-cliente"></a>
+### Cache no cliente
+
+O cache pode ficar no lado do cliente, como no sistema operacional ou navegador, no [lado do servidor](#proxy-reverso-servidor-web) ou em uma camada de cache separada.
+
+<a id="cache-em-cdn"></a>
+### Cache em CDN
+
+As [CDNs](#rede-de-distribuicao-de-conteudo) são consideradas uma forma de cache.
+
+<a id="cache-no-servidor-web"></a>
+### Cache no servidor web
+
+[Proxies reversos](#proxy-reverso-servidor-web) e caches como o [Varnish](https://www.varnish-cache.org/) podem servir conteúdo estático e dinâmico diretamente. Servidores web também podem armazenar requisições em cache e devolver respostas sem precisar acessar os servidores de aplicação.
+
+<a id="cache-no-banco-de-dados"></a>
+### Cache no banco de dados
+
+Normalmente, o banco de dados já inclui algum nível de cache em sua configuração padrão, otimizado para um caso de uso genérico. Ajustar essas configurações para padrões específicos de utilização pode melhorar ainda mais o desempenho.
+
+<a id="cache-na-aplicacao"></a>
+### Cache na aplicação
+
+Caches em memória, como Memcached e Redis, são armazenamentos chave-valor posicionados entre a aplicação e o armazenamento de dados. Como as informações ficam na RAM, o acesso é muito mais rápido do que em bancos de dados tradicionais, nos quais os dados permanecem em disco. A RAM é mais limitada do que o disco; por isso, algoritmos de [invalidação de cache](https://en.wikipedia.org/wiki/Cache_algorithms), como [least recently used — LRU](https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)), ajudam a remover entradas *cold* e manter dados *hot* na memória.
+
+O Redis também oferece recursos adicionais:
+
+* opção de persistência;
+* estruturas de dados integradas, como conjuntos ordenados e listas.
+
+Existem vários níveis de cache, agrupados em duas categorias gerais: **consultas ao banco de dados** e **objetos**:
+
+* nível de linha;
+* nível de consulta;
+* objetos serializáveis completos;
+* HTML completamente renderizado.
+
+Em geral, evite caches baseados em arquivos, pois eles dificultam a clonagem de servidores e o auto scaling.
+
+<a id="cache-no-nivel-de-consulta-ao-banco-de-dados"></a>
+### Cache no nível de consulta ao banco de dados
+
+Ao consultar o banco de dados, gere um hash da consulta para utilizá-lo como chave e armazene o resultado no cache. Essa abordagem apresenta problemas de expiração:
+
+* é difícil remover do cache o resultado de consultas complexas;
+* quando um dado é alterado, como uma célula de uma tabela, é necessário remover todas as consultas armazenadas que possam conter o valor modificado.
+
+<a id="cache-no-nivel-de-objeto"></a>
+### Cache no nível de objeto
+
+Trate os dados como objetos, de forma semelhante ao código da aplicação. A aplicação monta o conjunto de dados obtido do banco como uma instância de classe ou uma estrutura de dados:
+
+* remova o objeto do cache quando os dados que o originaram forem alterados;
+* essa abordagem permite processamento assíncrono: workers montam objetos consumindo a versão mais recente armazenada em cache.
+
+Exemplos do que pode ser armazenado em cache:
+
+* sessões de usuários;
+* páginas web completamente renderizadas;
+* fluxos de atividades;
+* dados do grafo de usuários.
+
+<a id="quando-atualizar-o-cache"></a>
+### Quando atualizar o cache
+
+Como o cache possui capacidade limitada, é necessário determinar qual estratégia de atualização atende melhor ao caso de uso.
+
+<a id="cache-aside"></a>
+#### Cache-aside
+
+<p align="center">
+  <img src="images/ONjORqk.png">
+  <br/>
+  <i><a href="http://www.slideshare.net/tmatyashovsky/from-cache-to-in-memory-data-grid-introduction-to-hazelcast">Fonte: From cache to in-memory data grid</a></i>
+</p>
+
+A aplicação é responsável por ler e escrever no armazenamento. O cache não interage diretamente com ele. A aplicação executa o seguinte fluxo:
+
+* procura a entrada no cache e encontra um *cache miss*;
+* carrega a entrada do banco de dados;
+* adiciona a entrada ao cache;
+* devolve a entrada.
+
+```python
+def get_user(self, user_id):
+    user = cache.get("user.{0}", user_id)
+    if user is None:
+        user = db.query("SELECT * FROM users WHERE user_id = {0}", user_id)
+        if user is not None:
+            key = "user.{0}".format(user_id)
+            cache.set(key, json.dumps(user))
+    return user
+```
+
+O [Memcached](https://memcached.org/) costuma ser utilizado dessa maneira.
+
+As leituras seguintes dos dados adicionados ao cache são rápidas. Cache-aside também é conhecido como *lazy loading*. Somente os dados solicitados são armazenados, evitando preencher o cache com informações que não são utilizadas.
+
+##### Desvantagens do cache-aside
+
+* Cada *cache miss* exige três acessos, o que pode causar um atraso perceptível.
+* Os dados podem ficar desatualizados quando são modificados no banco. Esse problema pode ser reduzido definindo um tempo de vida — TTL — que force a atualização da entrada ou utilizando write-through.
+* Quando um nó falha, ele é substituído por um nó novo e vazio, aumentando a latência.
+
+<a id="write-through"></a>
+#### Write-through
+
+<p align="center">
+  <img src="images/0vBc0hN.png">
+  <br/>
+  <i><a href="http://www.slideshare.net/jboner/scalability-availability-stability-patterns/">Fonte: Scalability, availability, stability, patterns</a></i>
+</p>
+
+A aplicação utiliza o cache como seu principal armazenamento, lendo e escrevendo dados nele, enquanto o cache fica responsável por ler e escrever no banco de dados:
+
+* a aplicação adiciona ou atualiza a entrada no cache;
+* o cache grava a entrada de forma síncrona no armazenamento de dados;
+* a operação retorna.
+
+Código da aplicação:
+
+```python
+set_user(12345, {"foo":"bar"})
+```
+
+Código do cache:
+
+```python
+def set_user(user_id, values):
+    user = db.query("UPDATE Users WHERE id = {0}", user_id, values)
+    cache.set(user_id, user)
+```
+
+A operação write-through é mais lenta devido à escrita, mas as leituras seguintes dos dados recém-gravados são rápidas. Em geral, usuários toleram melhor a latência durante a atualização de dados do que durante sua leitura. Os dados armazenados no cache não ficam desatualizados.
+
+##### Desvantagens do write-through
+
+* Quando um nó novo é criado após uma falha ou durante a escalabilidade, ele não terá entradas em cache até que os dados correspondentes sejam atualizados no banco. Utilizar cache-aside em conjunto com write-through pode reduzir esse problema.
+* Grande parte dos dados gravados talvez nunca seja lida, o que pode ser minimizado com um TTL.
+
+<a id="write-behind-write-back"></a>
+#### Write-behind — write-back
+
+<p align="center">
+  <img src="images/rgSrvjG.png">
+  <br/>
+  <i><a href="http://www.slideshare.net/jboner/scalability-availability-stability-patterns/">Fonte: Scalability, availability, stability, patterns</a></i>
+</p>
+
+No write-behind, a aplicação executa o seguinte fluxo:
+
+* adiciona ou atualiza a entrada no cache;
+* grava a entrada de forma assíncrona no armazenamento de dados, melhorando o desempenho das escritas.
+
+##### Desvantagens do write-behind
+
+* Pode ocorrer perda de dados quando o cache fica indisponível antes que seu conteúdo seja gravado no armazenamento de dados.
+* Implementar write-behind é mais complexo do que implementar cache-aside ou write-through.
+
+<a id="refresh-ahead"></a>
+#### Refresh-ahead
+
+<p align="center">
+  <img src="images/kxtjqgE.png">
+  <br/>
+  <i><a href="http://www.slideshare.net/tmatyashovsky/from-cache-to-in-memory-data-grid-introduction-to-hazelcast">Fonte: From cache to in-memory data grid</a></i>
+</p>
+
+O cache pode ser configurado para atualizar automaticamente entradas acessadas recentemente antes que expirem.
+
+O refresh-ahead pode reduzir a latência em comparação com read-through quando o cache consegue prever com precisão quais itens provavelmente serão necessários no futuro.
+
+##### Desvantagens do refresh-ahead
+
+* Previsões imprecisas sobre quais itens serão necessários podem produzir desempenho inferior ao de um sistema sem refresh-ahead.
+
+### Desvantagens do cache
+
+* É necessário manter a consistência entre os caches e a fonte da verdade, como o banco de dados, por meio da [invalidação de cache](https://en.wikipedia.org/wiki/Cache_algorithms).
+* Invalidar cache é um problema difícil; decidir quando atualizá-lo adiciona complexidade.
+* É necessário alterar a aplicação para incorporar soluções como Redis ou Memcached.
+
+### Fontes e leituras complementares
+
+* [From cache to in-memory data grid](http://www.slideshare.net/tmatyashovsky/from-cache-to-in-memory-data-grid-introduction-to-hazelcast)
+* [Scalable system design patterns](http://horicky.blogspot.com/2010/10/scalable-system-design-patterns.html)
+* [Introduction to architecting systems for scale](http://lethain.com/introduction-to-architecting-systems-for-scale/)
+* [Scalability, availability, stability, patterns](http://www.slideshare.net/jboner/scalability-availability-stability-patterns/)
+* [Scalability](https://web.archive.org/web/20230126233752/https://www.lecloud.net/post/9246290032/scalability-for-dummies-part-3-cache)
+* [AWS ElastiCache strategies](http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/Strategies.html)
+* [Wikipedia](https://en.wikipedia.org/wiki/Cache_(computing))
+
+<a id="assincronismo"></a>
+## Assincronismo
+
+<p align="center">
+  <img src="images/54GYsSx.png">
+  <br/>
+  <i><a href="http://lethain.com/introduction-to-architecting-systems-for-scale/#platform_layer">Fonte: Intro to architecting systems for scale</a></i>
+</p>
+
+Fluxos assíncronos ajudam a reduzir o tempo das requisições em operações custosas que, de outra forma, seriam executadas no fluxo síncrono. Eles também permitem realizar antecipadamente trabalhos demorados, como agregações periódicas de dados.
+
+<a id="filas-de-mensagens"></a>
+### Filas de mensagens
+
+Filas de mensagens recebem, mantêm e entregam mensagens. Quando uma operação é lenta demais para ser executada no fluxo da requisição, pode-se utilizar uma fila com o seguinte processo:
+
+* uma aplicação publica um job na fila e informa ao usuário o status do processamento;
+* um worker retira o job da fila, processa-o e sinaliza sua conclusão.
+
+O usuário não fica bloqueado e o job é processado em segundo plano. Durante esse período, o cliente pode executar uma pequena quantidade de processamento para transmitir a impressão de que a tarefa já foi concluída. Ao publicar um tweet, por exemplo, ele pode aparecer imediatamente na timeline do usuário, embora sua entrega efetiva a todos os seguidores ainda leve algum tempo.
+
+O **[Redis](https://redis.io/)** é útil como um message broker simples, mas mensagens podem ser perdidas.
+
+O **[RabbitMQ](https://www.rabbitmq.com/)** é popular, mas exige adaptação ao protocolo AMQP e o gerenciamento dos próprios nós.
+
+O **[Amazon SQS](https://aws.amazon.com/sqs/)** é um serviço gerenciado, mas pode apresentar alta latência e entregar a mesma mensagem mais de uma vez.
+
+<a id="filas-de-tarefas"></a>
+### Filas de tarefas
+
+Filas de tarefas recebem tarefas e seus dados relacionados, executam-nas e entregam os resultados. Elas podem oferecer agendamento e executar em segundo plano jobs que exigem grande capacidade computacional.
+
+O **[Celery](https://docs.celeryproject.org/en/stable/)** oferece suporte a agendamento e é utilizado principalmente com Python.
+
+<a id="backpressure"></a>
+### Backpressure
+
+Quando as filas crescem de maneira significativa, seu tamanho pode ultrapassar a capacidade da memória, provocando *cache misses*, leituras em disco e desempenho ainda menor. O [backpressure](http://mechanical-sympathy.blogspot.com/2012/05/apply-back-pressure-when-overloaded.html), ou contrapressão, ajuda a limitar o tamanho da fila, preservando throughput elevado e bons tempos de resposta para os jobs que já estão aguardando processamento. Quando a fila atinge seu limite, os clientes recebem uma indicação de servidor ocupado ou o status HTTP 503 e devem tentar novamente mais tarde. A repetição pode utilizar [backoff exponencial](https://en.wikipedia.org/wiki/Exponential_backoff).
+
+### Desvantagens do assincronismo
+
+* Casos de uso como cálculos de baixo custo e fluxos em tempo real podem funcionar melhor de forma síncrona, pois a introdução de filas adiciona atrasos e complexidade.
+
+### Fontes e leituras complementares
+
+* [It's all a numbers game](https://www.youtube.com/watch?v=1KRYH75wgy4)
+* [Applying back pressure when overloaded](http://mechanical-sympathy.blogspot.com/2012/05/apply-back-pressure-when-overloaded.html)
+* [Little's law](https://en.wikipedia.org/wiki/Little%27s_law)
+* [What is the difference between a message queue and a task queue?](https://www.quora.com/What-is-the-difference-between-a-message-queue-and-a-task-queue-Why-would-a-task-queue-require-a-message-broker-like-RabbitMQ-Redis-Celery-or-IronMQ-to-function)
+'''
+
+          readme = readme.replace(marker, "\n" + translated.strip() + "\n" + marker, 1)
+          readme = readme.replace(
+              "- [ ] cache e processamento assíncrono;",
+              "- [x] cache, estratégias de atualização e processamento assíncrono;",
+              1,
+          )
+          readme_path.write_text(readme.rstrip() + "\n", encoding="utf-8")
+
+          contributing = contributing_path.read_text(encoding="utf-8")
+          anchor = "| SQL tuning | otimização de SQL |\n"
+          if anchor not in contributing:
+              raise RuntimeError("Linha de terminologia SQL tuning não encontrada")
+          additions = """| cache-aside | cache-aside |\n| write-through | write-through |\n| write-behind / write-back | write-behind / write-back |\n| refresh-ahead | refresh-ahead |\n| message queue | fila de mensagens |\n| task queue | fila de tarefas |\n| back pressure | backpressure; apresentar “contrapressão” na definição |\n"""
+          if "| cache-aside | cache-aside |" not in contributing:
+              contributing = contributing.replace(anchor, anchor + additions, 1)
+          contributing_path.write_text(contributing.rstrip() + "\n", encoding="utf-8")
+          PY
+
+      - name: Commitar alterações
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README-pt-BR.md CONTRIBUTING-pt-BR.md
+          git commit -m "docs(pt-BR): traduz cache e processamento assíncrono"
+          git push origin HEAD:docs/pt-br-translation
