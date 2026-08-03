@@ -173,9 +173,9 @@ Antes de contribuir com a tradução, consulte as [diretrizes de contribuição 
     * [Chamada de procedimento remoto — RPC](#chamada-de-procedimento-remoto-rpc)
     * [Transferência de estado representacional — REST](#transferencia-de-estado-representacional-rest)
 * [Segurança](#seguranca)
-* [Apêndice](README.md#appendix)
-    * [Tabela de potências de dois](README.md#powers-of-two-table)
-    * [Números de latência que todo programador deve conhecer](README.md#latency-numbers-every-programmer-should-know)
+* [Apêndice](#apendice)
+    * [Tabela de potências de dois](#tabela-de-potencias-de-dois)
+    * [Números de latência que todo programador deve conhecer](#numeros-de-latencia-que-todo-programador-deve-conhecer)
     * [Outras perguntas de entrevista de design de sistemas](README.md#additional-system-design-interview-questions)
     * [Arquiteturas do mundo real](README.md#real-world-architectures)
     * [Arquiteturas de empresas](README.md#company-architectures)
@@ -275,11 +275,11 @@ Discuta possíveis soluções e trade-offs. Tudo envolve trade-offs. Trate os ga
 
 ### Cálculos de ordem de grandeza
 
-Talvez seja solicitado que você faça algumas estimativas manualmente. Consulte o [apêndice](README.md#appendix) para acessar os seguintes recursos:
+Talvez seja solicitado que você faça algumas estimativas manualmente. Consulte o [apêndice](#apendice) para acessar os seguintes recursos:
 
 * [Use back of the envelope calculations](http://highscalability.com/blog/2011/1/26/google-pro-tip-use-back-of-the-envelope-calculations-to-choo.html)
-* [Tabela de potências de dois](README.md#powers-of-two-table)
-* [Números de latência que todo programador deve conhecer](README.md#latency-numbers-every-programmer-should-know)
+* [Tabela de potências de dois](#tabela-de-potencias-de-dois)
+* [Números de latência que todo programador deve conhecer](#numeros-de-latencia-que-todo-programador-deve-conhecer)
 
 ### Fontes e leituras complementares
 
@@ -1550,6 +1550,78 @@ Segurança é um tema amplo. A menos que você tenha experiência considerável,
 * [Security guide for developers](https://github.com/FallibleInc/security-guide-for-developers)
 * [OWASP top ten](https://www.owasp.org/index.php/OWASP_Top_Ten_Cheat_Sheet)
 
+<a id="apendice"></a>
+## Apêndice
+
+Em algumas entrevistas, você poderá ser solicitado a realizar estimativas de ordem de grandeza, também conhecidas como *back-of-the-envelope estimates*. Por exemplo, talvez seja necessário determinar quanto tempo levaria para gerar 100 miniaturas de imagens armazenadas em disco ou quanta memória uma estrutura de dados ocuparia. A **tabela de potências de dois** e os **números de latência que todo programador deve conhecer** são referências úteis para esses cálculos.
+
+<a id="tabela-de-potencias-de-dois"></a>
+### Tabela de potências de dois
+
+```
+Potência        Valor exato          Valor aproximado     Bytes
+----------------------------------------------------------------
+7                             128
+8                             256
+10                           1024    1 mil                 1 KB
+16                         65.536                         64 KB
+20                      1.048.576    1 milhão              1 MB
+30                  1.073.741.824    1 bilhão              1 GB
+32                  4.294.967.296                          4 GB
+40              1.099.511.627.776    1 trilhão             1 TB
+```
+
+#### Fontes e leituras complementares
+
+* [Powers of two](https://en.wikipedia.org/wiki/Power_of_two)
+
+<a id="numeros-de-latencia-que-todo-programador-deve-conhecer"></a>
+### Números de latência que todo programador deve conhecer
+
+```
+Comparação de números de latência
+---------------------------------
+Referência ao cache L1                         0,5 ns
+Erro de predição de desvio                       5 ns
+Referência ao cache L2                           7 ns                      14x o cache L1
+Bloqueio/desbloqueio de mutex                   25 ns
+Referência à memória principal                 100 ns                      20x o cache L2, 200x o cache L1
+Compactar 1 KB com Zippy                    10.000 ns       10 us
+Enviar 1 KB por rede de 1 Gbps              10.000 ns       10 us
+Ler 4 KB aleatoriamente de SSD*             150.000 ns      150 us          ~1 GB/s no SSD
+Ler 1 MB sequencialmente da memória         250.000 ns      250 us
+Ida e volta no mesmo data center            500.000 ns      500 us
+Ler 1 MB sequencialmente de SSD*          1.000.000 ns    1.000 us    1 ms  ~1 GB/s no SSD, 4x a memória
+Busca em HDD                              10.000.000 ns   10.000 us   10 ms  20x a ida e volta no data center
+Ler 1 MB sequencialmente por 1 Gbps      10.000.000 ns   10.000 us   10 ms  40x a memória, 10x o SSD
+Ler 1 MB sequencialmente de HDD           30.000.000 ns   30.000 us   30 ms 120x a memória, 30x o SSD
+Enviar pacote CA->Países Baixos->CA      150.000.000 ns  150.000 us  150 ms
+
+Observações
+-----------
+1 ns = 10^-9 segundos
+1 us = 10^-6 segundos = 1.000 ns
+1 ms = 10^-3 segundos = 1.000 us = 1.000.000 ns
+```
+
+Métricas úteis com base nos números anteriores:
+
+* leitura sequencial de HDD a 30 MB/s;
+* leitura sequencial por Ethernet de 1 Gbps a 100 MB/s;
+* leitura sequencial de SSD a 1 GB/s;
+* leitura sequencial da memória principal a 4 GB/s.
+
+#### Números de latência visualizados
+
+![Números de latência visualizados](https://camo.githubusercontent.com/77f72259e1eb58596b564d1ad823af1853bc60a3/687474703a2f2f692e696d6775722e636f6d2f6b307431652e706e67)
+
+#### Fontes e leituras complementares
+
+* [Latency numbers every programmer should know - 1](https://gist.github.com/jboner/2841832)
+* [Latency numbers every programmer should know - 2](https://gist.github.com/hellerbarde/2843375)
+* [Designs, lessons, and advice from building large distributed systems](http://www.cs.cornell.edu/projects/ladis2009/talks/dean-keynote-ladis2009.pdf)
+* [Software Engineering Advice from Building Large-Scale Distributed Systems](https://static.googleusercontent.com/media/research.google.com/en//people/jeff/stanford-295-talk.pdf)
+
 ## Status da tradução
 
 A tradução está sendo desenvolvida incrementalmente, mantendo a estrutura e o significado da versão original em inglês.
@@ -1563,7 +1635,9 @@ A tradução está sendo desenvolvida incrementalmente, mantendo a estrutura e o
 - [x] cache, estratégias de atualização e processamento assíncrono;
 - [x] comunicação: HTTP, TCP, UDP, RPC e REST;
 - [x] segurança;
-- [ ] apêndices;
+- [x] apêndice: tabela de potências de dois e números de latência;
+- [ ] perguntas adicionais, arquiteturas e blogs de engenharia;
+- [ ] créditos, informações de contato e licença;
 - [ ] revisão técnica, linguística, de links e de âncoras.
 
 A discussão oficial da tradução para português brasileiro está registrada na [issue #40](https://github.com/donnemartin/system-design-primer/issues/40).

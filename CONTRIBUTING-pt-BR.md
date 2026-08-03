@@ -195,6 +195,10 @@ Use como referência as decisões já registradas no PR de integração. Entre e
 | SQL injection | injeção de SQL |
 | parameterized query | consulta parametrizada |
 | least privilege | princípio do menor privilégio |
+| back-of-the-envelope estimate | estimativa de ordem de grandeza; apresentar o termo original quando útil |
+| power of two | potência de dois |
+| latency number | número de latência |
+| nanosecond / microsecond / millisecond | nanossegundo / microssegundo / milissegundo; preservar as unidades ns, us e ms em tabelas |
 | cache-aside | cache-aside |
 | write-through | write-through |
 | write-behind / write-back | write-behind / write-back |
