@@ -129,7 +129,7 @@ Salvo quando houver um motivo claro, preserve:
 - nomes de arquivos, diretórios e branches;
 - URLs;
 - nomes próprios, empresas, produtos e tecnologias;
-- siglas consolidadas, como DNS, CDN, TCP, UDP, RPC, REST e CAP;
+- siglas consolidadas, como DNS, CDN, TCP, UDP, RPC, REST, CAP, ACID e BASE;
 - títulos de artigos, vídeos, livros e referências externas;
 - termos técnicos amplamente utilizados no mercado quando a tradução reduzir a precisão.
 
@@ -171,6 +171,13 @@ Use como referência as decisões já registradas no PR de integração. Entre e
 | federation | federação; apresentar “particionamento funcional” na definição |
 | denormalization | desnormalização |
 | SQL tuning | otimização de SQL |
+| NoSQL | NoSQL |
+| BASE | BASE; manter a sigla e apresentar os termos em português e inglês |
+| key-value store | armazenamento chave-valor |
+| document store | armazenamento de documentos |
+| wide column store | armazenamento em colunas largas |
+| graph database | banco de dados de grafos |
+| soft state | estado flexível — soft state |
 
 Caso um termo ainda não tenha uma tradução definida, registre a decisão no PR para que ela possa ser revisada e reutilizada nas demais seções.
 
