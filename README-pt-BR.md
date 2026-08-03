@@ -121,21 +121,21 @@ Antes de contribuir com a tradução, consulte as [diretrizes de contribuição 
     * [Failover](#failover)
     * [Replicação](#replicação)
     * [Disponibilidade em números](#disponibilidade-em-números)
-* [Sistema de Nomes de Domínio](README.md#domain-name-system)
-* [Rede de distribuição de conteúdo](README.md#content-delivery-network)
-    * [CDNs push](README.md#push-cdns)
-    * [CDNs pull](README.md#pull-cdns)
-* [Balanceador de carga](README.md#load-balancer)
+* [Sistema de Nomes de Domínio](#sistema-de-nomes-de-dominio)
+* [Rede de distribuição de conteúdo](#rede-de-distribuicao-de-conteudo)
+    * [CDNs push](#cdns-push)
+    * [CDNs pull](#cdns-pull)
+* [Balanceador de carga](#balanceador-de-carga)
     * [Ativo-passivo](#ativo-passivo)
     * [Ativo-ativo](#ativo-ativo)
-    * [Balanceamento de carga na camada 4](README.md#layer-4-load-balancing)
-    * [Balanceamento de carga na camada 7](README.md#layer-7-load-balancing)
-    * [Escalabilidade horizontal](README.md#horizontal-scaling)
-* [Proxy reverso — servidor web](README.md#reverse-proxy-web-server)
-    * [Balanceador de carga versus proxy reverso](README.md#load-balancer-vs-reverse-proxy)
-* [Camada de aplicação](README.md#application-layer)
-    * [Microsserviços](README.md#microservices)
-    * [Descoberta de serviços](README.md#service-discovery)
+    * [Balanceamento de carga na camada 4](#balanceamento-de-carga-na-camada-4)
+    * [Balanceamento de carga na camada 7](#balanceamento-de-carga-na-camada-7)
+    * [Escalabilidade horizontal](#escalabilidade-horizontal)
+* [Proxy reverso — servidor web](#proxy-reverso-servidor-web)
+    * [Balanceador de carga versus proxy reverso](#balanceador-de-carga-versus-proxy-reverso)
+* [Camada de aplicação](#camada-de-aplicacao)
+    * [Microsserviços](#microsservicos)
+    * [Descoberta de serviços](#descoberta-de-servicos)
 * [Banco de dados](README.md#database)
     * [Sistema gerenciador de banco de dados relacional — SGBDR](README.md#relational-database-management-system-rdbms)
         * [Replicação master-slave](README.md#master-slave-replication)
@@ -501,6 +501,246 @@ Disponibilidade (Total) = 1 - (1 - Disponibilidade (Foo)) * (1 - Disponibilidade
 
 Caso `Foo` e `Bar` tenham, cada um, 99,9% de disponibilidade, a disponibilidade total em paralelo será de 99,9999%.
 
+<a id="sistema-de-nomes-de-dominio"></a>
+## Sistema de Nomes de Domínio
+
+<p align="center">
+  <img src="images/IOyLj4i.jpg">
+  <br/>
+  <i><a href="http://www.slideshare.net/srikrupa5/dns-security-presentation-issa">Fonte: DNS security presentation</a></i>
+</p>
+
+Um Sistema de Nomes de Domínio (DNS) traduz um nome de domínio, como `www.example.com`, para um endereço IP.
+
+O DNS é hierárquico, com alguns servidores autoritativos no nível superior. Seu roteador ou provedor de internet fornece informações sobre quais servidores DNS devem ser consultados durante uma resolução. Servidores DNS de níveis inferiores armazenam mapeamentos em cache, que podem ficar desatualizados devido a atrasos na propagação do DNS. Os resultados também podem ser armazenados em cache pelo navegador ou sistema operacional durante um período determinado pelo [tempo de vida — time to live (TTL)](https://en.wikipedia.org/wiki/Time_to_live).
+
+* **Registro NS — name server** — especifica os servidores DNS do domínio ou subdomínio.
+* **Registro MX — mail exchange** — especifica os servidores de e-mail que recebem mensagens.
+* **Registro A — address** — aponta um nome para um endereço IP.
+* **CNAME — canonical name** — aponta um nome para outro nome ou `CNAME`, como `example.com` para `www.example.com`, ou para um registro `A`.
+
+Serviços como [CloudFlare](https://www.cloudflare.com/dns/) e [Route 53](https://aws.amazon.com/route53/) oferecem DNS gerenciado. Alguns serviços DNS podem rotear o tráfego por diferentes métodos:
+
+* [Round robin ponderado](https://www.jscape.com/blog/load-balancing-algorithms):
+    * impedir que o tráfego seja enviado para servidores em manutenção;
+    * equilibrar clusters de tamanhos diferentes;
+    * realizar testes A/B.
+* [Baseado em latência](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy-latency.html).
+* [Baseado em geolocalização](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy-geo.html).
+
+### Desvantagens do DNS
+
+* O acesso a um servidor DNS introduz um pequeno atraso, embora ele seja reduzido pelo cache descrito anteriormente.
+* O gerenciamento de servidores DNS pode ser complexo e geralmente é realizado por [governos, provedores de internet e grandes empresas](http://superuser.com/questions/472695/who-controls-the-dns-servers/472729).
+* Serviços DNS podem sofrer [ataques DDoS](http://dyn.com/blog/dyn-analysis-summary-of-friday-october-21-attack/), impedindo o acesso a sites quando os usuários não conhecem seus endereços IP.
+
+### Fontes e leituras complementares
+
+* [DNS architecture](https://technet.microsoft.com/en-us/library/dd197427(v=ws.10).aspx)
+* [Wikipedia](https://en.wikipedia.org/wiki/Domain_Name_System)
+* [DNS articles](https://support.dnsimple.com/categories/dns/)
+
+<a id="rede-de-distribuicao-de-conteudo"></a>
+## Rede de distribuição de conteúdo
+
+<p align="center">
+  <img src="images/h9TAuGI.jpg">
+  <br/>
+  <i><a href="https://www.creative-artworks.eu/why-use-a-content-delivery-network-cdn/">Fonte: Why use a CDN</a></i>
+</p>
+
+Uma rede de distribuição de conteúdo (CDN) é uma rede globalmente distribuída de servidores proxy que entrega conteúdo a partir de locais mais próximos do usuário. Em geral, arquivos estáticos, como HTML, CSS, JavaScript, fotos e vídeos, são servidos por uma CDN, embora algumas CDNs, como o Amazon CloudFront, também ofereçam suporte a conteúdo dinâmico. A resolução DNS do site informa aos clientes qual servidor deve ser consultado.
+
+Servir conteúdo por CDNs pode melhorar significativamente o desempenho de duas maneiras:
+
+* os usuários recebem conteúdo de data centers próximos;
+* seus servidores deixam de processar as requisições atendidas pela CDN.
+
+<a id="cdns-push"></a>
+### CDNs push
+
+CDNs push recebem conteúdo novo sempre que ocorrem alterações no servidor. Você assume a responsabilidade de fornecer o conteúdo, enviá-lo diretamente à CDN e reescrever as URLs para que apontem para ela. Também pode configurar quando o conteúdo expira e quando é atualizado. O conteúdo é enviado apenas quando é novo ou foi modificado, minimizando o tráfego, mas aumentando o uso de armazenamento.
+
+Sites com pouco tráfego ou cujo conteúdo não é atualizado com frequência funcionam bem com CDNs push. O conteúdo é colocado na CDN uma única vez, em vez de ser buscado novamente em intervalos regulares.
+
+<a id="cdns-pull"></a>
+### CDNs pull
+
+CDNs pull buscam conteúdo novo no servidor quando o primeiro usuário o solicita. O conteúdo permanece em seu servidor, e as URLs são reescritas para apontar para a CDN. A primeira requisição é mais lenta, até que o conteúdo seja armazenado em cache na CDN.
+
+Um [tempo de vida — time to live (TTL)](https://en.wikipedia.org/wiki/Time_to_live) determina por quanto tempo o conteúdo permanece no cache. CDNs pull minimizam o espaço de armazenamento utilizado na CDN, mas podem produzir tráfego redundante quando os arquivos expiram e são buscados novamente antes de terem sido realmente alterados.
+
+Sites com muito tráfego funcionam bem com CDNs pull, pois o tráfego é distribuído de forma mais uniforme e apenas o conteúdo solicitado recentemente permanece na CDN.
+
+### Desvantagens das CDNs
+
+* O custo de uma CDN pode ser significativo, dependendo do tráfego, embora deva ser comparado aos custos adicionais de não utilizar uma CDN.
+* O conteúdo pode ficar desatualizado caso seja modificado antes do término do TTL.
+* O uso de CDNs exige que as URLs do conteúdo estático sejam alteradas para apontar para a CDN.
+
+### Fontes e leituras complementares
+
+* [Globally distributed content delivery](https://figshare.com/articles/Globally_distributed_content_delivery/6605972)
+* [The differences between push and pull CDNs](https://www.geeksforgeeks.org/system-design/pull-cdn-vs-push-cdn/)
+* [Wikipedia](https://en.wikipedia.org/wiki/Content_delivery_network)
+
+<a id="balanceador-de-carga"></a>
+## Balanceador de carga
+
+<p align="center">
+  <img src="images/h81n9iK.png">
+  <br/>
+  <i><a href="http://horicky.blogspot.com/2010/10/scalable-system-design-patterns.html">Fonte: Scalable system design patterns</a></i>
+</p>
+
+Balanceadores de carga distribuem as requisições recebidas dos clientes entre recursos computacionais, como servidores de aplicação e bancos de dados. Em cada caso, o balanceador retorna ao cliente apropriado a resposta produzida pelo recurso computacional. Balanceadores de carga são eficazes para:
+
+* impedir que requisições sejam enviadas a servidores não saudáveis;
+* impedir a sobrecarga de recursos;
+* ajudar a eliminar pontos únicos de falha.
+
+Balanceadores de carga podem ser implementados em hardware, geralmente mais caro, ou em software, como o HAProxy.
+
+Outros benefícios incluem:
+
+* **Terminação SSL** — descriptografar requisições recebidas e criptografar respostas dos servidores, evitando que os servidores de backend executem essas operações potencialmente custosas.
+    * Elimina a necessidade de instalar [certificados X.509](https://en.wikipedia.org/wiki/X.509) em cada servidor.
+* **Persistência de sessão** — emitir cookies e direcionar as requisições de um cliente para a mesma instância quando as aplicações web não gerenciam as sessões de outra maneira.
+
+Para proteger o sistema contra falhas, é comum configurar vários balanceadores de carga nos modos [ativo-passivo](#ativo-passivo) ou [ativo-ativo](#ativo-ativo).
+
+Os balanceadores podem rotear tráfego com base em diferentes métricas e estratégias, incluindo:
+
+* distribuição aleatória;
+* servidor menos carregado;
+* sessão ou cookies;
+* [round robin ou round robin ponderado](https://www.g33kinfo.com/info/round-robin-vs-weighted-round-robin-lb);
+* [camada 4](#balanceamento-de-carga-na-camada-4);
+* [camada 7](#balanceamento-de-carga-na-camada-7).
+
+<a id="balanceamento-de-carga-na-camada-4"></a>
+### Balanceamento de carga na camada 4
+
+Balanceadores de carga da camada 4 analisam informações da [camada de transporte](README.md#communication) para decidir como distribuir as requisições. Em geral, isso envolve os endereços IP de origem e destino e as portas presentes no cabeçalho, mas não o conteúdo do pacote. Esses balanceadores encaminham pacotes de rede para o servidor upstream e recebem seus pacotes de resposta, realizando [tradução de endereços de rede — Network Address Translation (NAT)](https://web.archive.org/web/20240117134735/https://www.nginx.com/resources/glossary/layer-4-load-balancing/).
+
+<a id="balanceamento-de-carga-na-camada-7"></a>
+### Balanceamento de carga na camada 7
+
+Balanceadores de carga da camada 7 analisam informações da [camada de aplicação](README.md#communication) para decidir como distribuir as requisições. Isso pode envolver o conteúdo de cabeçalhos, mensagens e cookies. Esses balanceadores encerram o tráfego de rede, leem a mensagem, tomam a decisão de balanceamento e abrem uma conexão com o servidor selecionado. Por exemplo, um balanceador da camada 7 pode direcionar tráfego de vídeo para servidores que hospedam vídeos e encaminhar tráfego sensível de cobrança para servidores com segurança reforçada.
+
+Em troca de menor flexibilidade, o balanceamento na camada 4 exige menos tempo e recursos computacionais do que o balanceamento na camada 7, embora o impacto de desempenho possa ser pequeno em hardware comum moderno.
+
+<a id="escalabilidade-horizontal"></a>
+### Escalabilidade horizontal
+
+Balanceadores de carga também auxiliam na escalabilidade horizontal, melhorando o desempenho e a disponibilidade. Escalar horizontalmente com máquinas comuns é mais econômico e oferece maior disponibilidade do que ampliar um único servidor com hardware mais caro, abordagem conhecida como **escalabilidade vertical**. Também costuma ser mais fácil contratar profissionais com experiência em hardware comum do que em sistemas corporativos especializados.
+
+#### Desvantagens da escalabilidade horizontal
+
+* A escalabilidade horizontal introduz complexidade e exige a clonagem de servidores:
+    * os servidores devem ser stateless, sem armazenar dados relacionados ao usuário, como sessões ou fotos de perfil;
+    * as sessões podem ser armazenadas em um repositório centralizado, como um [banco de dados](README.md#database), SQL ou NoSQL, ou um [cache](README.md#cache) persistente, como Redis ou Memcached.
+* Servidores downstream, como caches e bancos de dados, precisam lidar com mais conexões simultâneas conforme os servidores upstream são escalados horizontalmente.
+
+### Desvantagens do balanceador de carga
+
+* O balanceador pode se tornar um gargalo de desempenho quando não possui recursos suficientes ou está configurado incorretamente.
+* Introduzir um balanceador para ajudar a eliminar um ponto único de falha aumenta a complexidade.
+* Um único balanceador também é um ponto único de falha; configurar vários balanceadores aumenta ainda mais a complexidade.
+
+### Fontes e leituras complementares
+
+* [NGINX architecture](https://www.nginx.com/blog/inside-nginx-how-we-designed-for-performance-scale/)
+* [HAProxy architecture guide](http://www.haproxy.org/download/1.2/doc/architecture.txt)
+* [Scalability](https://web.archive.org/web/20220530193911/https://www.lecloud.net/post/7295452622/scalability-for-dummies-part-1-clones)
+* [Wikipedia](https://en.wikipedia.org/wiki/Load_balancing_(computing))
+* [Layer 4 load balancing](https://www.nginx.com/resources/glossary/layer-4-load-balancing/)
+* [Layer 7 load balancing](https://www.nginx.com/resources/glossary/layer-7-load-balancing/)
+* [ELB listener config](http://docs.aws.amazon.com/elasticloadbalancing/latest/classic/elb-listener-config.html)
+
+<a id="proxy-reverso-servidor-web"></a>
+## Proxy reverso — servidor web
+
+<p align="center">
+  <img src="images/n41Azff.png">
+  <br/>
+  <i><a href="https://upload.wikimedia.org/wikipedia/commons/6/67/Reverse_proxy_h2g2bob.svg">Fonte: Wikipedia</a></i>
+  <br/>
+</p>
+
+Um proxy reverso é um servidor web que centraliza serviços internos e fornece interfaces unificadas ao público. As requisições dos clientes são encaminhadas a um servidor capaz de atendê-las; em seguida, o proxy reverso devolve a resposta do servidor ao cliente.
+
+Outros benefícios incluem:
+
+* **Maior segurança** — ocultar informações sobre servidores de backend, bloquear endereços IP e limitar o número de conexões por cliente.
+* **Maior escalabilidade e flexibilidade** — os clientes enxergam apenas o endereço IP do proxy reverso, permitindo escalar servidores ou alterar suas configurações.
+* **Terminação SSL** — descriptografar requisições recebidas e criptografar respostas dos servidores, evitando que os servidores de backend executem essas operações potencialmente custosas.
+    * Elimina a necessidade de instalar [certificados X.509](https://en.wikipedia.org/wiki/X.509) em cada servidor.
+* **Compressão** — compactar respostas dos servidores.
+* **Cache** — devolver respostas armazenadas para requisições em cache.
+* **Conteúdo estático** — servir conteúdo estático diretamente:
+    * HTML, CSS e JavaScript;
+    * fotos;
+    * vídeos;
+    * outros conteúdos.
+
+<a id="balanceador-de-carga-versus-proxy-reverso"></a>
+### Balanceador de carga versus proxy reverso
+
+* Implantar um balanceador de carga é útil quando existem vários servidores. Em geral, os balanceadores direcionam tráfego para um conjunto de servidores que desempenham a mesma função.
+* Um proxy reverso pode ser útil mesmo quando existe apenas um servidor web ou servidor de aplicação, disponibilizando os benefícios descritos anteriormente.
+* Soluções como NGINX e HAProxy oferecem tanto proxy reverso na camada 7 quanto balanceamento de carga.
+
+### Desvantagens do proxy reverso
+
+* Introduzir um proxy reverso aumenta a complexidade.
+* Um único proxy reverso é um ponto único de falha; configurar vários proxies reversos, por exemplo em um [failover](https://en.wikipedia.org/wiki/Failover), aumenta ainda mais a complexidade.
+
+### Fontes e leituras complementares
+
+* [Reverse proxy vs load balancer](https://www.nginx.com/resources/glossary/reverse-proxy-vs-load-balancer/)
+* [NGINX architecture](https://www.nginx.com/blog/inside-nginx-how-we-designed-for-performance-scale/)
+* [HAProxy architecture guide](http://www.haproxy.org/download/1.2/doc/architecture.txt)
+* [Wikipedia](https://en.wikipedia.org/wiki/Reverse_proxy)
+
+<a id="camada-de-aplicacao"></a>
+## Camada de aplicação
+
+<p align="center">
+  <img src="images/yB5SYwm.png">
+  <br/>
+  <i><a href="http://lethain.com/introduction-to-architecting-systems-for-scale/#platform_layer">Fonte: Intro to architecting systems for scale</a></i>
+</p>
+
+Separar a camada web da camada de aplicação, também conhecida como camada de plataforma, permite escalar e configurar as duas de forma independente. A inclusão de uma nova API pode exigir novos servidores de aplicação sem necessariamente demandar servidores web adicionais. O **princípio da responsabilidade única** defende serviços pequenos e autônomos que trabalham em conjunto. Equipes pequenas responsáveis por serviços pequenos podem planejar de forma mais agressiva para um crescimento rápido.
+
+Workers na camada de aplicação também ajudam a viabilizar o [assincronismo](README.md#asynchronism).
+
+<a id="microsservicos"></a>
+### Microsserviços
+
+Relacionados a essa discussão estão os [microsserviços](https://en.wikipedia.org/wiki/Microservices), que podem ser descritos como um conjunto de serviços pequenos, modulares e implantáveis de forma independente. Cada serviço executa um processo próprio e se comunica por um mecanismo leve e bem definido para atender a um objetivo de negócio.<sup><a href="https://smartbear.com/learn/api-design/what-are-microservices">1</a></sup>
+
+O Pinterest, por exemplo, poderia possuir microsserviços para perfil de usuário, seguidores, feed, pesquisa, upload de fotos e outras funções.
+
+<a id="descoberta-de-servicos"></a>
+### Descoberta de serviços
+
+Sistemas como [Consul](https://www.consul.io/docs/index.html), [Etcd](https://coreos.com/etcd/docs/latest) e [Zookeeper](http://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper) podem ajudar os serviços a se encontrar, mantendo registros de nomes, endereços e portas. [Health checks](https://www.consul.io/intro/getting-started/checks.html) ajudam a verificar a integridade dos serviços e frequentemente utilizam um endpoint [HTTP](README.md#hypertext-transfer-protocol-http). Consul e Etcd também possuem um [armazenamento chave-valor](README.md#key-value-store) integrado, útil para guardar valores de configuração e outros dados compartilhados.
+
+### Desvantagens da camada de aplicação
+
+* Adicionar uma camada de aplicação com serviços fracamente acoplados exige uma abordagem diferente sob as perspectivas de arquitetura, operações e processos, em comparação com um sistema monolítico.
+* Microsserviços podem aumentar a complexidade de implantação e operação.
+
+### Fontes e leituras complementares
+
+* [Intro to architecting systems for scale](http://lethain.com/introduction-to-architecting-systems-for-scale)
+* [Crack the system design interview](http://www.puncsky.com/blog/2016-02-13-crack-the-system-design-interview)
+* [Service oriented architecture](https://en.wikipedia.org/wiki/Service-oriented_architecture)
+* [Introduction to Zookeeper](http://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper)
+* [Here's what you need to know about building microservices](https://cloudncode.wordpress.com/2016/07/22/msa-getting-started/)
+
 ## Status da tradução
 
 A tradução está sendo desenvolvida incrementalmente, mantendo a estrutura e o significado da versão original em inglês.
@@ -508,7 +748,7 @@ A tradução está sendo desenvolvida incrementalmente, mantendo a estrutura e o
 - [x] Índice e guia de estudos;
 - [x] abordagem para entrevistas de design de sistemas;
 - [x] fundamentos de escalabilidade, desempenho e disponibilidade;
-- [ ] componentes de infraestrutura e camada de aplicação;
+- [x] componentes de infraestrutura e camada de aplicação;
 - [ ] bancos de dados, cache e processamento assíncrono;
 - [ ] comunicação, segurança e apêndices;
 - [ ] revisão técnica, linguística, de links e de âncoras.
