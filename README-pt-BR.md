@@ -101,33 +101,33 @@ Antes de contribuir, consulte as [diretrizes de contribuição](CONTRIBUTING.md)
 </p>
 
 > [!NOTE]
-> Enquanto as próximas seções são traduzidas, os links abaixo apontam para os tópicos correspondentes no `README.md` original em inglês.
+> As seções já traduzidas apontam para este documento. As demais continuam apontando temporariamente para o `README.md` original em inglês.
 
-* [Tópicos de design de sistemas: comece aqui](README.md#system-design-topics-start-here)
-    * [Etapa 1: assista à aula em vídeo sobre escalabilidade](README.md#step-1-review-the-scalability-video-lecture)
-    * [Etapa 2: leia o artigo sobre escalabilidade](README.md#step-2-review-the-scalability-article)
-    * [Próximas etapas](README.md#next-steps)
-* [Desempenho versus escalabilidade](README.md#performance-vs-scalability)
-* [Latência versus throughput](README.md#latency-vs-throughput)
-* [Disponibilidade versus consistência](README.md#availability-vs-consistency)
-    * [Teorema CAP](README.md#cap-theorem)
-        * [CP — consistência e tolerância a partições](README.md#cp---consistency-and-partition-tolerance)
-        * [AP — disponibilidade e tolerância a partições](README.md#ap---availability-and-partition-tolerance)
-* [Padrões de consistência](README.md#consistency-patterns)
-    * [Consistência fraca](README.md#weak-consistency)
-    * [Consistência eventual](README.md#eventual-consistency)
-    * [Consistência forte](README.md#strong-consistency)
-* [Padrões de disponibilidade](README.md#availability-patterns)
-    * [Failover](README.md#fail-over)
-    * [Replicação](README.md#replication)
-    * [Disponibilidade em números](README.md#availability-in-numbers)
+* [Tópicos de design de sistemas: comece aqui](#tópicos-de-design-de-sistemas-comece-aqui)
+    * [Etapa 1: assista à aula em vídeo sobre escalabilidade](#etapa-1-assista-à-aula-em-vídeo-sobre-escalabilidade)
+    * [Etapa 2: leia o artigo sobre escalabilidade](#etapa-2-leia-o-artigo-sobre-escalabilidade)
+    * [Próximas etapas](#próximas-etapas)
+* [Desempenho versus escalabilidade](#desempenho-versus-escalabilidade)
+* [Latência versus throughput](#latência-versus-throughput)
+* [Disponibilidade versus consistência](#disponibilidade-versus-consistência)
+    * [Teorema CAP](#teorema-cap)
+        * [CP — consistência e tolerância a partições](#cp-consistencia-e-tolerancia-a-particoes)
+        * [AP — disponibilidade e tolerância a partições](#ap-disponibilidade-e-tolerancia-a-particoes)
+* [Padrões de consistência](#padrões-de-consistência)
+    * [Consistência fraca](#consistência-fraca)
+    * [Consistência eventual](#consistência-eventual)
+    * [Consistência forte](#consistência-forte)
+* [Padrões de disponibilidade](#padrões-de-disponibilidade)
+    * [Failover](#failover)
+    * [Replicação](#replicação)
+    * [Disponibilidade em números](#disponibilidade-em-números)
 * [Sistema de Nomes de Domínio](README.md#domain-name-system)
 * [Rede de distribuição de conteúdo](README.md#content-delivery-network)
     * [CDNs push](README.md#push-cdns)
     * [CDNs pull](README.md#pull-cdns)
 * [Balanceador de carga](README.md#load-balancer)
-    * [Ativo-passivo](README.md#active-passive)
-    * [Ativo-ativo](README.md#active-active)
+    * [Ativo-passivo](#ativo-passivo)
+    * [Ativo-ativo](#ativo-ativo)
     * [Balanceamento de carga na camada 4](README.md#layer-4-load-balancing)
     * [Balanceamento de carga na camada 7](README.md#layer-7-load-balancing)
     * [Escalabilidade horizontal](README.md#horizontal-scaling)
@@ -271,7 +271,7 @@ Identifique e trate os gargalos considerando as restrições. Por exemplo, você
 * cache;
 * particionamento horizontal do banco de dados — sharding.
 
-Discuta possíveis soluções e trade-offs. Tudo envolve trade-offs. Trate os gargalos utilizando os [princípios de design de sistemas escaláveis](README.md#index-of-system-design-topics).
+Discuta possíveis soluções e trade-offs. Tudo envolve trade-offs. Trate os gargalos utilizando os [princípios de design de sistemas escaláveis](#índice-de-tópicos-de-design-de-sistemas).
 
 ### Cálculos de ordem de grandeza
 
@@ -290,13 +290,224 @@ Consulte os links abaixo para ter uma ideia melhor do que esperar:
 * [Intro to Architecture and Systems Design Interviews](https://www.youtube.com/watch?v=ZgdS0EUmn70)
 * [System design template](https://leetcode.com/discuss/career/229177/My-System-Design-Template)
 
+## Tópicos de design de sistemas: comece aqui
+
+Está começando a estudar design de sistemas?
+
+Primeiro, você precisará compreender os princípios mais comuns: o que são, como são utilizados e quais são suas vantagens e desvantagens.
+
+### Etapa 1: assista à aula em vídeo sobre escalabilidade
+
+[Scalability Lecture at Harvard](https://www.youtube.com/watch?v=-W9F__D3oY4)
+
+* Tópicos abordados:
+    * escalabilidade vertical;
+    * escalabilidade horizontal;
+    * cache;
+    * balanceamento de carga;
+    * replicação de banco de dados;
+    * particionamento de banco de dados.
+
+### Etapa 2: leia o artigo sobre escalabilidade
+
+[Scalability](https://web.archive.org/web/20221030091841/http://www.lecloud.net/tagged/scalability/chrono)
+
+* Tópicos abordados:
+    * [Clones](https://web.archive.org/web/20220530193911/https://www.lecloud.net/post/7295452622/scalability-for-dummies-part-1-clones);
+    * [Databases](https://web.archive.org/web/20220602114024/https://www.lecloud.net/post/7994751381/scalability-for-dummies-part-2-database);
+    * [Caches](https://web.archive.org/web/20230126233752/https://www.lecloud.net/post/9246290032/scalability-for-dummies-part-3-cache);
+    * [Asynchronism](https://web.archive.org/web/20220926171507/https://www.lecloud.net/post/9699762917/scalability-for-dummies-part-4-asynchronism).
+
+### Próximas etapas
+
+A seguir, analisaremos trade-offs de alto nível:
+
+* **desempenho** versus **escalabilidade**;
+* **latência** versus **throughput**;
+* **disponibilidade** versus **consistência**.
+
+Lembre-se de que **tudo envolve trade-offs**.
+
+Depois, aprofundaremos tópicos mais específicos, como DNS, CDNs e balanceadores de carga.
+
+## Desempenho versus escalabilidade
+
+Um serviço é **escalável** quando o aumento dos recursos resulta em um aumento proporcional de **desempenho**. Em geral, aumentar o desempenho significa processar mais unidades de trabalho, mas também pode significar lidar com unidades maiores de trabalho, como ocorre quando os conjuntos de dados crescem.<sup><a href="http://www.allthingsdistributed.com/2006/03/a_word_on_scalability.html">1</a></sup>
+
+Outra maneira de entender a diferença entre desempenho e escalabilidade:
+
+* Caso exista um problema de **desempenho**, o sistema é lento para um único usuário.
+* Caso exista um problema de **escalabilidade**, o sistema é rápido para um único usuário, mas fica lento sob carga elevada.
+
+### Fontes e leituras complementares
+
+* [A word on scalability](http://www.allthingsdistributed.com/2006/03/a_word_on_scalability.html)
+* [Scalability, availability, stability, patterns](http://www.slideshare.net/jboner/scalability-availability-stability-patterns/)
+
+## Latência versus throughput
+
+**Latência** é o tempo necessário para executar uma ação ou produzir um resultado.
+
+**Throughput**, ou vazão, é a quantidade dessas ações ou resultados processada por unidade de tempo.
+
+Em geral, deve-se buscar o **maior throughput possível** mantendo uma **latência aceitável**.
+
+### Fontes e leituras complementares
+
+* [Understanding latency vs throughput](https://community.cadence.com/cadence_blogs_8/b/fv/posts/understanding-latency-vs-throughput)
+
+## Disponibilidade versus consistência
+
+### Teorema CAP
+
+<p align="center">
+  <img src="images/bgLMI2u.png">
+  <br/>
+  <i><a href="https://robertgreiner.com/cap-theorem-revisited">Fonte: CAP theorem revisited</a></i>
+</p>
+
+Em um sistema computacional distribuído, é possível oferecer apenas duas das seguintes garantias:
+
+* **Consistência** — toda leitura recebe a escrita mais recente ou um erro;
+* **disponibilidade** — toda requisição recebe uma resposta, sem garantia de que ela contenha a versão mais recente das informações;
+* **tolerância a partições** — o sistema continua operando mesmo diante de partições arbitrárias causadas por falhas de rede.
+
+*Redes não são confiáveis; portanto, é necessário oferecer tolerância a partições. Isso exige um trade-off de software entre consistência e disponibilidade.*
+
+<a id="cp-consistencia-e-tolerancia-a-particoes"></a>
+#### CP - consistência e tolerância a partições
+
+Aguardar uma resposta do nó isolado pela partição pode resultar em um erro de timeout. CP é uma boa escolha quando as necessidades do negócio exigem leituras e escritas atômicas.
+
+<a id="ap-disponibilidade-e-tolerancia-a-particoes"></a>
+#### AP - disponibilidade e tolerância a partições
+
+As respostas retornam a versão dos dados mais prontamente disponível em qualquer nó, que pode não ser a mais recente. As escritas podem levar algum tempo para se propagar depois que a partição é resolvida.
+
+AP é uma boa escolha quando o negócio admite [consistência eventual](#consistência-eventual) ou quando o sistema precisa continuar funcionando apesar de erros externos.
+
+### Fontes e leituras complementares
+
+* [CAP theorem revisited](https://robertgreiner.com/cap-theorem-revisited/)
+* [A plain english introduction to CAP theorem](http://ksat.me/a-plain-english-introduction-to-cap-theorem)
+* [CAP FAQ](https://github.com/henryr/cap-faq)
+* [The CAP theorem](https://www.youtube.com/watch?v=k-Yaq8AHlFA)
+
+## Padrões de consistência
+
+Quando existem várias cópias dos mesmos dados, é necessário decidir como sincronizá-las para que os clientes tenham uma visão consistente das informações. Retome a definição de consistência apresentada no [teorema CAP](#teorema-cap): toda leitura recebe a escrita mais recente ou um erro.
+
+### Consistência fraca
+
+Depois de uma escrita, as leituras podem ou não enxergar a alteração. O sistema adota uma abordagem de melhor esforço.
+
+Essa abordagem é encontrada em sistemas como o memcached. A consistência fraca funciona bem em casos de uso em tempo real, como VoIP, videochamadas e jogos multiplayer em tempo real. Por exemplo, ao perder o sinal por alguns segundos durante uma ligação, você não escuta o que foi falado durante a interrupção quando a conexão é restabelecida.
+
+### Consistência eventual
+
+Depois de uma escrita, as leituras acabarão enxergando a alteração, normalmente em alguns milissegundos. Os dados são replicados de maneira assíncrona.
+
+Essa abordagem é encontrada em sistemas como DNS e e-mail. A consistência eventual funciona bem em sistemas altamente disponíveis.
+
+### Consistência forte
+
+Depois de uma escrita, as leituras enxergarão a alteração. Os dados são replicados de maneira síncrona.
+
+Essa abordagem é encontrada em sistemas de arquivos e SGBDRs. A consistência forte funciona bem em sistemas que precisam de transações.
+
+### Fontes e leituras complementares
+
+* [Transactions across data centers](http://snarfed.org/transactions_across_datacenters_io.html)
+
+## Padrões de disponibilidade
+
+Existem dois padrões complementares para oferecer alta disponibilidade: **failover** e **replicação**.
+
+### Failover
+
+#### Ativo-passivo
+
+No failover ativo-passivo, sinais de heartbeat são enviados entre o servidor ativo e o servidor passivo em espera. Quando o heartbeat é interrompido, o servidor passivo assume o endereço IP do servidor ativo e retoma o serviço.
+
+A duração da indisponibilidade depende de o servidor passivo já estar executando em espera *hot standby* ou precisar ser iniciado a partir de uma espera *cold standby*. Apenas o servidor ativo processa o tráfego.
+
+O failover ativo-passivo também pode ser chamado de failover master-slave.
+
+#### Ativo-ativo
+
+No modelo ativo-ativo, os dois servidores processam tráfego e distribuem a carga entre si.
+
+Quando os servidores são expostos publicamente, o DNS precisa conhecer os endereços IP públicos de ambos. Quando os servidores são internos, a lógica da aplicação precisa conhecer os dois servidores.
+
+O failover ativo-ativo também pode ser chamado de failover master-master.
+
+### Desvantagens do failover
+
+* O failover exige mais hardware e adiciona complexidade.
+* Existe a possibilidade de perda de dados caso o sistema ativo falhe antes que dados recém-gravados sejam replicados para o servidor passivo.
+
+### Replicação
+
+#### Master-slave e master-master
+
+Este tópico é discutido com mais detalhes na seção de [banco de dados](README.md#database):
+
+* [Replicação master-slave](README.md#master-slave-replication)
+* [Replicação master-master](README.md#master-master-replication)
+
+### Disponibilidade em números
+
+A disponibilidade costuma ser quantificada pelo tempo de atividade — ou de indisponibilidade — como uma porcentagem do período em que o serviço está acessível. Geralmente, ela é expressa pela quantidade de noves: um serviço com disponibilidade de 99,99% é descrito como tendo quatro noves.
+
+#### Disponibilidade de 99,9% — três noves
+
+| Período | Indisponibilidade aceitável |
+|---|---|
+| Por ano | 8h 45min 57s |
+| Por mês | 43min 49,7s |
+| Por semana | 10min 4,8s |
+| Por dia | 1min 26,4s |
+
+#### Disponibilidade de 99,99% — quatro noves
+
+| Período | Indisponibilidade aceitável |
+|---|---|
+| Por ano | 52min 35,7s |
+| Por mês | 4min 23s |
+| Por semana | 1min 5s |
+| Por dia | 8,6s |
+
+#### Disponibilidade em paralelo versus em sequência
+
+Quando um serviço é composto por vários componentes sujeitos a falhas, sua disponibilidade total depende de esses componentes estarem organizados em sequência ou em paralelo.
+
+###### Em sequência
+
+A disponibilidade total diminui quando dois componentes com disponibilidade inferior a 100% estão em sequência:
+
+```
+Disponibilidade (Total) = Disponibilidade (Foo) * Disponibilidade (Bar)
+```
+
+Caso `Foo` e `Bar` tenham, cada um, 99,9% de disponibilidade, a disponibilidade total em sequência será de aproximadamente 99,8%.
+
+###### Em paralelo
+
+A disponibilidade total aumenta quando dois componentes com disponibilidade inferior a 100% estão em paralelo:
+
+```
+Disponibilidade (Total) = 1 - (1 - Disponibilidade (Foo)) * (1 - Disponibilidade (Bar))
+```
+
+Caso `Foo` e `Bar` tenham, cada um, 99,9% de disponibilidade, a disponibilidade total em paralelo será de 99,9999%.
+
 ## Status da tradução
 
 A tradução está sendo desenvolvida incrementalmente, mantendo a estrutura e o significado da versão original em inglês.
 
 - [x] Índice e guia de estudos;
 - [x] abordagem para entrevistas de design de sistemas;
-- [ ] fundamentos de escalabilidade, desempenho e disponibilidade;
+- [x] fundamentos de escalabilidade, desempenho e disponibilidade;
 - [ ] componentes de infraestrutura e camada de aplicação;
 - [ ] bancos de dados, cache e processamento assíncrono;
 - [ ] comunicação, segurança e apêndices;
