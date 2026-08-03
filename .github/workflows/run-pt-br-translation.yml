@@ -1,20 +1,24 @@
-name: Executar tradução pt-BR temporária
+name: Aplicar tradução pt-BR — comunicação e segurança
 
 on:
-  pull_request:
-    branches:
-      - master
+  issue_comment:
     types:
-      - edited
+      - created
   workflow_dispatch:
 
 permissions:
   contents: write
+  pull-requests: read
 
 jobs:
   apply-translation:
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.ref == 'docs/pt-br-translation'
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.issue.number == 1 &&
+      github.event.issue.pull_request &&
+      github.event.comment.body == '/aplicar-traducao-pt-br')
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout da branch de tradução
         uses: actions/checkout@v4
@@ -22,24 +26,136 @@ jobs:
           ref: docs/pt-br-translation
           fetch-depth: 0
 
-      - name: Extrair e executar script de tradução
+      - name: Aplicar tradução de comunicação
         shell: bash
         run: |
+          if grep -q '<a id="comunicacao"></a>' README-pt-BR.md; then
+            echo "A seção de Comunicação já está presente."
+            exit 0
+          fi
+
           git show 6f97028e86aa544f7aaeae035944f3771736e0f7:.github/workflows/translate-communication-pt-br.yml > /tmp/translation-workflow.yml
+
           python - <<'PY'
           from pathlib import Path
 
           workflow = Path('/tmp/translation-workflow.yml').read_text(encoding='utf-8')
           start_marker = "          python - <<'PY'\n"
           end_marker = "\n          PY\n\n      - name: Validar alterações"
+
           if start_marker not in workflow or end_marker not in workflow:
-              raise RuntimeError('Bloco Python da tradução não encontrado')
+              raise RuntimeError('Bloco Python da tradução de Comunicação não encontrado')
+
           script = workflow.split(start_marker, 1)[1].split(end_marker, 1)[0]
           lines = script.splitlines()
-          normalized = '\n'.join(line[10:] if line.startswith('          ') else line for line in lines)
-          Path('/tmp/apply_translation.py').write_text(normalized + '\n', encoding='utf-8')
+          normalized = '\n'.join(
+              line[10:] if line.startswith('          ') else line
+              for line in lines
+          )
+
+          Path('/tmp/apply_communication.py').write_text(
+              normalized + '\n',
+              encoding='utf-8',
+          )
           PY
-          python /tmp/apply_translation.py
+
+          python /tmp/apply_communication.py
+
+      - name: Aplicar tradução de segurança
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          readme_path = Path('README-pt-BR.md')
+          contributing_path = Path('CONTRIBUTING-pt-BR.md')
+
+          readme = readme_path.read_text(encoding='utf-8')
+          contributing = contributing_path.read_text(encoding='utf-8')
+
+          readme = readme.replace(
+              '* [Segurança](README.md#security)',
+              '* [Segurança](#seguranca)',
+              1,
+          )
+
+          if '<a id="seguranca"></a>' not in readme:
+              marker = '\n## Status da tradução\n'
+              if marker not in readme:
+                  raise RuntimeError('Marcador de status não encontrado no README pt-BR')
+
+              translated = r'''
+          <a id="seguranca"></a>
+          ## Segurança
+
+          Esta seção precisa de algumas atualizações. Considere [contribuir](#como-contribuir)!
+
+          Segurança é um tema amplo. A menos que você tenha experiência considerável, formação em segurança ou esteja se candidatando a uma posição que exija conhecimentos de segurança, provavelmente não precisará conhecer mais do que os fundamentos:
+
+          * Criptografe os dados em trânsito e em repouso.
+          * Valide e sanitize todas as entradas de usuários, assim como qualquer parâmetro de entrada exposto a eles, para evitar [cross-site scripting — XSS](https://en.wikipedia.org/wiki/Cross-site_scripting) e [injeção de SQL](https://en.wikipedia.org/wiki/SQL_injection).
+          * Utilize consultas parametrizadas para evitar injeção de SQL.
+          * Aplique o [princípio do menor privilégio](https://en.wikipedia.org/wiki/Principle_of_least_privilege).
+
+          ### Fontes e leituras complementares
+
+          * [API security checklist](https://github.com/shieldfy/API-Security-Checklist)
+          * [Security guide for developers](https://github.com/FallibleInc/security-guide-for-developers)
+          * [OWASP top ten](https://www.owasp.org/index.php/OWASP_Top_Ten_Cheat_Sheet)
+          '''
+
+              translated = '\n'.join(
+                  line[10:] if line.startswith('          ') else line
+                  for line in translated.strip().splitlines()
+              )
+              readme = readme.replace(
+                  marker,
+                  '\n' + translated + '\n' + marker,
+                  1,
+              )
+
+          pending_status = '- [ ] segurança e apêndices;'
+          completed_status = '- [x] segurança;\n- [ ] apêndices;'
+
+          if pending_status in readme:
+              readme = readme.replace(
+                  pending_status,
+                  completed_status,
+                  1,
+              )
+          elif '- [x] segurança;' not in readme:
+              raise RuntimeError('Linha de status de Segurança não encontrada')
+
+          glossary_marker = '| connection pool | pool de conexões |'
+          glossary_addition = '''| connection pool | pool de conexões |
+          | security | segurança |
+          | encryption in transit | criptografia em trânsito |
+          | encryption at rest | criptografia em repouso |
+          | input sanitization | validação e sanitização de entradas |
+          | cross-site scripting (XSS) | cross-site scripting — XSS |
+          | SQL injection | injeção de SQL |
+          | parameterized query | consulta parametrizada |
+          | least privilege | princípio do menor privilégio |'''
+          glossary_addition = '\n'.join(
+              line[10:] if line.startswith('          ') else line
+              for line in glossary_addition.splitlines()
+          )
+
+          if '| least privilege | princípio do menor privilégio |' not in contributing:
+              if glossary_marker not in contributing:
+                  raise RuntimeError('Marcador do glossário não encontrado')
+              contributing = contributing.replace(
+                  glossary_marker,
+                  glossary_addition,
+                  1,
+              )
+
+          readme_path.write_text(readme.rstrip() + '\n', encoding='utf-8')
+          contributing_path.write_text(
+              contributing.rstrip() + '\n',
+              encoding='utf-8',
+          )
+          PY
 
       - name: Validar alterações
         shell: bash
@@ -50,8 +166,12 @@ jobs:
           grep -q '### Protocolo de Datagrama do Usuário — UDP' README-pt-BR.md
           grep -q '### Chamada de Procedimento Remoto — RPC' README-pt-BR.md
           grep -q '### Transferência de Estado Representacional — REST' README-pt-BR.md
+          grep -q '<a id="seguranca"></a>' README-pt-BR.md
+          grep -q '^## Segurança$' README-pt-BR.md
           grep -q '\[x\] comunicação: HTTP, TCP, UDP, RPC e REST' README-pt-BR.md
-          grep -q 'Representational State Transfer (REST)' CONTRIBUTING-pt-BR.md
+          grep -q '\[x\] segurança' README-pt-BR.md
+          grep -q 'princípio do menor privilégio' README-pt-BR.md
+          grep -q 'least privilege' CONTRIBUTING-pt-BR.md
 
       - name: Commitar tradução
         shell: bash
@@ -59,9 +179,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add README-pt-BR.md CONTRIBUTING-pt-BR.md
+
           if git diff --cached --quiet; then
-            echo "Nenhuma alteração pendente"
+            echo "Nenhuma alteração pendente."
             exit 0
           fi
-          git commit -m "docs(pt-BR): traduz comunicação e protocolos"
+
+          git commit -m "docs(pt-BR): traduz comunicação e segurança"
           git push origin HEAD:docs/pt-br-translation
