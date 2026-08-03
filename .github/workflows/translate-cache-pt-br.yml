@@ -347,3 +347,5 @@ Quando as filas crescem de maneira significativa, seu tamanho pode ultrapassar a
           git add README-pt-BR.md CONTRIBUTING-pt-BR.md
           git commit -m "docs(pt-BR): traduz cache e processamento assíncrono"
           git push origin HEAD:docs/pt-br-translation
+
+# disparo explícito após a criação do workflow
