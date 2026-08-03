@@ -136,14 +136,14 @@ Antes de contribuir com a tradução, consulte as [diretrizes de contribuição 
 * [Camada de aplicação](#camada-de-aplicacao)
     * [Microsserviços](#microsservicos)
     * [Descoberta de serviços](#descoberta-de-servicos)
-* [Banco de dados](README.md#database)
-    * [Sistema gerenciador de banco de dados relacional — SGBDR](README.md#relational-database-management-system-rdbms)
-        * [Replicação master-slave](README.md#master-slave-replication)
-        * [Replicação master-master](README.md#master-master-replication)
-        * [Federação](README.md#federation)
-        * [Particionamento horizontal — sharding](README.md#sharding)
-        * [Desnormalização](README.md#denormalization)
-        * [Otimização de SQL](README.md#sql-tuning)
+* [Banco de dados](#banco-de-dados)
+    * [Sistema gerenciador de banco de dados relacional — SGBDR](#sistema-gerenciador-de-banco-de-dados-relacional-sgbdr)
+        * [Replicação master-slave](#replicacao-master-slave)
+        * [Replicação master-master](#replicacao-master-master)
+        * [Federação](#federacao)
+        * [Particionamento horizontal — sharding](#particionamento-horizontal-sharding)
+        * [Desnormalização](#desnormalizacao)
+        * [Otimização de SQL](#otimizacao-de-sql)
     * [NoSQL](README.md#nosql)
         * [Armazenamento chave-valor](README.md#key-value-store)
         * [Armazenamento de documentos](README.md#document-store)
@@ -450,10 +450,10 @@ O failover ativo-ativo também pode ser chamado de failover master-master.
 
 #### Master-slave e master-master
 
-Este tópico é discutido com mais detalhes na seção de [banco de dados](README.md#database):
+Este tópico é discutido com mais detalhes na seção de [banco de dados](#banco-de-dados):
 
-* [Replicação master-slave](README.md#master-slave-replication)
-* [Replicação master-master](README.md#master-master-replication)
+* [Replicação master-slave](#replicacao-master-slave)
+* [Replicação master-master](#replicacao-master-master)
 
 ### Disponibilidade em números
 
@@ -639,7 +639,7 @@ Balanceadores de carga também auxiliam na escalabilidade horizontal, melhorando
 
 * A escalabilidade horizontal introduz complexidade e exige a clonagem de servidores:
     * os servidores devem ser stateless, sem armazenar dados relacionados ao usuário, como sessões ou fotos de perfil;
-    * as sessões podem ser armazenadas em um repositório centralizado, como um [banco de dados](README.md#database), SQL ou NoSQL, ou um [cache](README.md#cache) persistente, como Redis ou Memcached.
+    * as sessões podem ser armazenadas em um repositório centralizado, como um [banco de dados](#banco-de-dados), SQL ou NoSQL, ou um [cache](README.md#cache) persistente, como Redis ou Memcached.
 * Servidores downstream, como caches e bancos de dados, precisam lidar com mais conexões simultâneas conforme os servidores upstream são escalados horizontalmente.
 
 ### Desvantagens do balanceador de carga
@@ -741,6 +741,198 @@ Sistemas como [Consul](https://www.consul.io/docs/index.html), [Etcd](https://co
 * [Introduction to Zookeeper](http://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper)
 * [Here's what you need to know about building microservices](https://cloudncode.wordpress.com/2016/07/22/msa-getting-started/)
 
+<a id="banco-de-dados"></a>
+## Banco de dados
+
+<p align="center">
+  <img src="images/Xkm5CXz.png">
+  <br/>
+  <i><a href="https://www.youtube.com/watch?v=kKjm4ehYiMs">Fonte: Scaling up to your first 10 million users</a></i>
+</p>
+
+<a id="sistema-gerenciador-de-banco-de-dados-relacional-sgbdr"></a>
+### Sistema gerenciador de banco de dados relacional — SGBDR
+
+Um banco de dados relacional, como um banco SQL, é uma coleção de itens de dados organizados em tabelas.
+
+**ACID** é um conjunto de propriedades das [transações](https://en.wikipedia.org/wiki/Database_transaction) de bancos de dados relacionais.
+
+* **Atomicidade** — cada transação é executada por completo ou não é executada.
+* **Consistência** — cada transação leva o banco de dados de um estado válido para outro estado válido.
+* **Isolamento** — a execução concorrente de transações produz os mesmos resultados que sua execução serial.
+* **Durabilidade** — depois que uma transação é confirmada, seus efeitos permanecem registrados.
+
+Existem diversas técnicas para escalar um banco de dados relacional: **replicação master-slave**, **replicação master-master**, **federação**, **sharding**, **desnormalização** e **otimização de SQL**.
+
+<a id="replicacao-master-slave"></a>
+#### Replicação master-slave
+
+O servidor master atende leituras e escritas e replica as escritas para um ou mais servidores slave, que atendem somente leituras. Os slaves também podem replicar dados para outros slaves em uma estrutura semelhante a uma árvore. Caso o master fique indisponível, o sistema pode continuar operando em modo somente leitura até que um slave seja promovido a master ou um novo master seja provisionado.
+
+<p align="center">
+  <img src="images/C9ioGtn.png">
+  <br/>
+  <i><a href="http://www.slideshare.net/jboner/scalability-availability-stability-patterns/">Fonte: Scalability, availability, stability, patterns</a></i>
+</p>
+
+##### Desvantagens da replicação master-slave
+
+* É necessária lógica adicional para promover um slave a master.
+* Consulte [Desvantagens da replicação](#desvantagens-da-replicacao) para os pontos relacionados **tanto** à replicação master-slave quanto à master-master.
+
+<a id="replicacao-master-master"></a>
+#### Replicação master-master
+
+Os dois servidores master atendem leituras e escritas e coordenam entre si as operações de escrita. Caso um dos masters fique indisponível, o sistema pode continuar processando leituras e escritas.
+
+<p align="center">
+  <img src="images/krAHLGg.png">
+  <br/>
+  <i><a href="http://www.slideshare.net/jboner/scalability-availability-stability-patterns/">Fonte: Scalability, availability, stability, patterns</a></i>
+</p>
+
+##### Desvantagens da replicação master-master
+
+* É necessário utilizar um balanceador de carga ou alterar a lógica da aplicação para determinar em qual servidor realizar cada escrita.
+* A maioria dos sistemas master-master apresenta consistência fraca, violando ACID, ou maior latência de escrita devido à sincronização.
+* A resolução de conflitos se torna mais relevante à medida que novos nós de escrita são adicionados e a latência aumenta.
+* Consulte [Desvantagens da replicação](#desvantagens-da-replicacao) para os pontos relacionados **tanto** à replicação master-slave quanto à master-master.
+
+<a id="desvantagens-da-replicacao"></a>
+##### Desvantagens da replicação
+
+* Existe a possibilidade de perda de dados quando o master falha antes que dados recém-gravados sejam replicados para os outros nós.
+* As escritas são reproduzidas nas réplicas de leitura. Quando há muitas escritas, essas réplicas podem ficar ocupadas reproduzindo as alterações e ter menor capacidade para processar leituras.
+* Quanto maior o número de réplicas de leitura, maior o volume de dados a replicar e, consequentemente, maior pode ser o atraso de replicação.
+* Em alguns sistemas, a escrita no master pode utilizar várias threads em paralelo, enquanto as réplicas de leitura suportam somente a aplicação sequencial das escritas por uma única thread.
+* A replicação exige mais hardware e adiciona complexidade.
+
+##### Fontes e leituras complementares: replicação
+
+* [Scalability, availability, stability, patterns](http://www.slideshare.net/jboner/scalability-availability-stability-patterns/)
+* [Multi-master replication](https://en.wikipedia.org/wiki/Multi-master_replication)
+
+<a id="federacao"></a>
+#### Federação
+
+<p align="center">
+  <img src="images/U3qV33e.png">
+  <br/>
+  <i><a href="https://www.youtube.com/watch?v=kKjm4ehYiMs">Fonte: Scaling up to your first 10 million users</a></i>
+</p>
+
+A federação, também chamada de particionamento funcional, divide os bancos de dados de acordo com suas funções. Por exemplo, em vez de um único banco monolítico, podem existir três bancos separados: **fóruns**, **usuários** e **produtos**. Isso reduz o tráfego de leitura e escrita em cada banco e, portanto, o atraso de replicação. Bancos menores permitem que uma parcela maior dos dados permaneça em memória, aumentando os acertos de cache devido à melhor localidade. Como não existe um único master central serializando todas as escritas, é possível escrever em paralelo e aumentar o throughput.
+
+##### Desvantagens da federação
+
+* A federação não é eficaz quando o esquema exige funções ou tabelas muito grandes.
+* É necessário atualizar a lógica da aplicação para determinar em qual banco realizar cada leitura ou escrita.
+* Combinar dados de dois bancos fica mais complexo e pode exigir um [servidor vinculado](http://stackoverflow.com/questions/5145637/querying-data-by-joining-two-tables-in-two-database-on-different-servers).
+* A federação exige mais hardware e adiciona complexidade.
+
+##### Fontes e leituras complementares: federação
+
+* [Scaling up to your first 10 million users](https://www.youtube.com/watch?v=kKjm4ehYiMs)
+
+<a id="particionamento-horizontal-sharding"></a>
+#### Particionamento horizontal — sharding
+
+<p align="center">
+  <img src="images/wU8x5Id.png">
+  <br/>
+  <i><a href="http://www.slideshare.net/jboner/scalability-availability-stability-patterns/">Fonte: Scalability, availability, stability, patterns</a></i>
+</p>
+
+O sharding distribui os dados entre bancos distintos, de modo que cada banco gerencie somente um subconjunto das informações. Em um banco de usuários, por exemplo, novos shards podem ser adicionados ao cluster à medida que a quantidade de usuários aumenta.
+
+Assim como na [federação](#federacao), o sharding reduz o tráfego de leitura e escrita, o volume de replicação e aumenta os acertos de cache. O tamanho dos índices também é reduzido, o que normalmente melhora o desempenho e acelera as consultas. Caso um shard fique indisponível, os demais continuam operando, embora seja recomendável utilizar alguma forma de replicação para evitar perda de dados. Assim como na federação, não existe um único master central serializando as escritas; portanto, é possível escrever em paralelo e aumentar o throughput.
+
+Formas comuns de particionar uma tabela de usuários incluem utilizar a inicial do sobrenome ou a localização geográfica do usuário.
+
+##### Desvantagens do sharding
+
+* É necessário atualizar a lógica da aplicação para trabalhar com shards, o que pode resultar em consultas SQL complexas.
+* A distribuição de dados pode ficar desequilibrada. Por exemplo, concentrar usuários muito ativos em um shard pode gerar uma carga maior nele do que nos demais.
+    * O rebalanceamento adiciona complexidade. Uma função de particionamento baseada em [hashing consistente](http://www.paperplanes.de/2011/12/9/the-magic-of-consistent-hashing.html) pode reduzir a quantidade de dados transferidos.
+* Combinar dados provenientes de vários shards é mais complexo.
+* O sharding exige mais hardware e adiciona complexidade.
+
+##### Fontes e leituras complementares: sharding
+
+* [The coming of the shard](http://highscalability.com/blog/2009/8/6/an-unorthodox-approach-to-database-design-the-coming-of-the.html)
+* [Shard database architecture](https://en.wikipedia.org/wiki/Shard_(database_architecture))
+* [Consistent hashing](http://www.paperplanes.de/2011/12/9/the-magic-of-consistent-hashing.html)
+
+<a id="desnormalizacao"></a>
+#### Desnormalização
+
+A desnormalização busca melhorar o desempenho das leituras em troca de parte do desempenho das escritas. Cópias redundantes dos dados são gravadas em várias tabelas para evitar joins custosos. Alguns SGBDRs, como [PostgreSQL](https://en.wikipedia.org/wiki/PostgreSQL) e Oracle, oferecem [visões materializadas](https://en.wikipedia.org/wiki/Materialized_view), que armazenam informações redundantes e mantêm as cópias consistentes.
+
+Quando os dados são distribuídos com técnicas como [federação](#federacao) e [sharding](#particionamento-horizontal-sharding), gerenciar joins entre data centers aumenta ainda mais a complexidade. A desnormalização pode evitar a necessidade desses joins complexos.
+
+Na maioria dos sistemas, a quantidade de leituras pode superar a de escritas em proporções de 100 para 1 ou até 1.000 para 1. Uma leitura que exige um join complexo pode ser muito custosa e consumir um tempo significativo em operações de disco.
+
+##### Desvantagens da desnormalização
+
+* Os dados são duplicados.
+* Restrições podem ajudar a manter as cópias redundantes sincronizadas, mas aumentam a complexidade do design do banco de dados.
+* Um banco desnormalizado submetido a uma carga intensa de escritas pode apresentar desempenho inferior ao de sua versão normalizada.
+
+##### Fontes e leituras complementares: desnormalização
+
+* [Denormalization](https://en.wikipedia.org/wiki/Denormalization)
+
+<a id="otimizacao-de-sql"></a>
+#### Otimização de SQL
+
+A otimização de SQL é um tema amplo, sobre o qual muitos [livros](https://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Daps&field-keywords=sql+tuning) foram escritos.
+
+É importante realizar **benchmarks** e **profiling** para simular cargas e identificar gargalos.
+
+* **Benchmark** — simule situações de carga elevada com ferramentas como o [ab](http://httpd.apache.org/docs/2.2/programs/ab.html).
+* **Profiling** — habilite ferramentas como o [log de consultas lentas](http://dev.mysql.com/doc/refman/5.7/en/slow-query-log.html) para localizar problemas de desempenho.
+
+Os resultados de benchmarks e profiling podem indicar as otimizações a seguir.
+
+##### Otimize o esquema
+
+* O MySQL grava dados em disco em blocos contíguos para permitir acesso rápido.
+* Use `CHAR` em vez de `VARCHAR` para campos de tamanho fixo.
+    * `CHAR` permite acesso aleatório mais rápido; com `VARCHAR`, é necessário encontrar o final de uma string antes de avançar para a próxima.
+* Use `TEXT` para grandes blocos de texto, como publicações de blog. `TEXT` também permite pesquisas booleanas. Um campo `TEXT` armazena em disco um ponteiro utilizado para localizar o bloco de texto.
+* Use `INT` para números maiores, até `2^32`, aproximadamente 4 bilhões.
+* Use `DECIMAL` para valores monetários, evitando erros de representação de ponto flutuante.
+* Evite armazenar `BLOBs` grandes; prefira armazenar a localização do objeto.
+* `VARCHAR(255)` utiliza o maior número de caracteres que pode ser representado por um número de 8 bits, frequentemente aproveitando melhor um byte em alguns SGBDRs.
+* Defina a restrição `NOT NULL` quando aplicável para [melhorar o desempenho das buscas](http://stackoverflow.com/questions/1017239/how-do-null-values-affect-performance-in-a-database-search).
+
+##### Use índices adequados
+
+* Colunas utilizadas em consultas com `SELECT`, `GROUP BY`, `ORDER BY` e `JOIN` podem se beneficiar de índices.
+* Os índices normalmente são representados por [árvores B](https://en.wikipedia.org/wiki/B-tree) autoequilibradas, que mantêm os dados ordenados e permitem buscas, acesso sequencial, inserções e remoções em tempo logarítmico.
+* Manter um índice pode conservar dados em memória, mas exige mais espaço.
+* As escritas também podem ficar mais lentas, porque os índices precisam ser atualizados.
+* Ao carregar grandes volumes de dados, pode ser mais rápido desabilitar os índices, carregar as informações e depois reconstruí-los.
+
+##### Evite joins custosos
+
+* [Desnormalize](#desnormalizacao) quando o desempenho exigir.
+
+##### Particione as tabelas
+
+* Divida uma tabela colocando pontos de acesso intenso em uma tabela separada, ajudando a manter esses dados em memória.
+
+##### Ajuste o cache de consultas
+
+* Em alguns casos, o [cache de consultas](https://dev.mysql.com/doc/refman/5.7/en/query-cache.html) pode causar [problemas de desempenho](https://www.percona.com/blog/2016/10/12/mysql-5-7-performance-tuning-immediately-after-installation/).
+
+##### Fontes e leituras complementares: otimização de SQL
+
+* [Tips for optimizing MySQL queries](http://aiddroid.com/10-tips-optimizing-mysql-queries-dont-suck/)
+* [Is there a good reason i see VARCHAR(255) used so often?](http://stackoverflow.com/questions/1217466/is-there-a-good-reason-i-see-varchar255-used-so-often-as-opposed-to-another-l)
+* [How do null values affect performance?](http://stackoverflow.com/questions/1017239/how-do-null-values-affect-performance-in-a-database-search)
+* [Slow query log](http://dev.mysql.com/doc/refman/5.7/en/slow-query-log.html)
+
 ## Status da tradução
 
 A tradução está sendo desenvolvida incrementalmente, mantendo a estrutura e o significado da versão original em inglês.
@@ -749,7 +941,8 @@ A tradução está sendo desenvolvida incrementalmente, mantendo a estrutura e o
 - [x] abordagem para entrevistas de design de sistemas;
 - [x] fundamentos de escalabilidade, desempenho e disponibilidade;
 - [x] componentes de infraestrutura e camada de aplicação;
-- [ ] bancos de dados, cache e processamento assíncrono;
+- [x] bancos de dados relacionais, replicação e particionamento;
+- [ ] NoSQL, cache e processamento assíncrono;
 - [ ] comunicação, segurança e apêndices;
 - [ ] revisão técnica, linguística, de links e de âncoras.
 
