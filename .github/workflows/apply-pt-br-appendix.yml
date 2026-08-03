@@ -1,0 +1,179 @@
+name: Aplicar tradução pt-BR — apêndice
+
+on:
+  issue_comment:
+    types:
+      - created
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  apply-translation:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.issue.number == 1 &&
+      github.event.issue.pull_request &&
+      github.event.comment.body == '/aplicar-apendice-pt-br')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout da branch de tradução
+        uses: actions/checkout@v4
+        with:
+          ref: docs/pt-br-translation
+          fetch-depth: 0
+
+      - name: Traduzir apêndice e cálculos de ordem de grandeza
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          readme_path = Path("README-pt-BR.md")
+          contributing_path = Path("CONTRIBUTING-pt-BR.md")
+
+          readme = readme_path.read_text(encoding="utf-8")
+          contributing = contributing_path.read_text(encoding="utf-8")
+
+          if '<a id="apendice"></a>' in readme:
+              raise RuntimeError("A seção de apêndice já foi adicionada")
+
+          replacements = {
+              "README.md#appendix": "#apendice",
+              "README.md#powers-of-two-table": "#tabela-de-potencias-de-dois",
+              "README.md#latency-numbers-every-programmer-should-know": "#numeros-de-latencia-que-todo-programador-deve-conhecer",
+          }
+          for old, new in replacements.items():
+              readme = readme.replace(old, new)
+
+          marker = "\n## Status da tradução\n"
+          if marker not in readme:
+              raise RuntimeError("Marcador de status não encontrado")
+
+          translated = r'''
+<a id="apendice"></a>
+## Apêndice
+
+Em algumas entrevistas, você poderá ser solicitado a realizar estimativas de ordem de grandeza, também conhecidas como *back-of-the-envelope estimates*. Por exemplo, talvez seja necessário determinar quanto tempo levaria para gerar 100 miniaturas de imagens armazenadas em disco ou quanta memória uma estrutura de dados ocuparia. A **tabela de potências de dois** e os **números de latência que todo programador deve conhecer** são referências úteis para esses cálculos.
+
+<a id="tabela-de-potencias-de-dois"></a>
+### Tabela de potências de dois
+
+```
+Potência        Valor exato          Valor aproximado     Bytes
+----------------------------------------------------------------
+7                             128
+8                             256
+10                           1024    1 mil                 1 KB
+16                         65.536                         64 KB
+20                      1.048.576    1 milhão              1 MB
+30                  1.073.741.824    1 bilhão              1 GB
+32                  4.294.967.296                          4 GB
+40              1.099.511.627.776    1 trilhão             1 TB
+```
+
+#### Fontes e leituras complementares
+
+* [Powers of two](https://en.wikipedia.org/wiki/Power_of_two)
+
+<a id="numeros-de-latencia-que-todo-programador-deve-conhecer"></a>
+### Números de latência que todo programador deve conhecer
+
+```
+Comparação de números de latência
+---------------------------------
+Referência ao cache L1                         0,5 ns
+Erro de predição de desvio                       5 ns
+Referência ao cache L2                           7 ns                      14x o cache L1
+Bloqueio/desbloqueio de mutex                   25 ns
+Referência à memória principal                 100 ns                      20x o cache L2, 200x o cache L1
+Compactar 1 KB com Zippy                    10.000 ns       10 us
+Enviar 1 KB por rede de 1 Gbps              10.000 ns       10 us
+Ler 4 KB aleatoriamente de SSD*             150.000 ns      150 us          ~1 GB/s no SSD
+Ler 1 MB sequencialmente da memória         250.000 ns      250 us
+Ida e volta no mesmo data center            500.000 ns      500 us
+Ler 1 MB sequencialmente de SSD*          1.000.000 ns    1.000 us    1 ms  ~1 GB/s no SSD, 4x a memória
+Busca em HDD                              10.000.000 ns   10.000 us   10 ms  20x a ida e volta no data center
+Ler 1 MB sequencialmente por 1 Gbps      10.000.000 ns   10.000 us   10 ms  40x a memória, 10x o SSD
+Ler 1 MB sequencialmente de HDD           30.000.000 ns   30.000 us   30 ms 120x a memória, 30x o SSD
+Enviar pacote CA->Países Baixos->CA      150.000.000 ns  150.000 us  150 ms
+
+Observações
+-----------
+1 ns = 10^-9 segundos
+1 us = 10^-6 segundos = 1.000 ns
+1 ms = 10^-3 segundos = 1.000 us = 1.000.000 ns
+```
+
+Métricas úteis com base nos números anteriores:
+
+* leitura sequencial de HDD a 30 MB/s;
+* leitura sequencial por Ethernet de 1 Gbps a 100 MB/s;
+* leitura sequencial de SSD a 1 GB/s;
+* leitura sequencial da memória principal a 4 GB/s.
+
+#### Números de latência visualizados
+
+![Números de latência visualizados](https://camo.githubusercontent.com/77f72259e1eb58596b564d1ad823af1853bc60a3/687474703a2f2f692e696d6775722e636f6d2f6b307431652e706e67)
+
+#### Fontes e leituras complementares
+
+* [Latency numbers every programmer should know - 1](https://gist.github.com/jboner/2841832)
+* [Latency numbers every programmer should know - 2](https://gist.github.com/hellerbarde/2843375)
+* [Designs, lessons, and advice from building large distributed systems](http://www.cs.cornell.edu/projects/ladis2009/talks/dean-keynote-ladis2009.pdf)
+* [Software Engineering Advice from Building Large-Scale Distributed Systems](https://static.googleusercontent.com/media/research.google.com/en//people/jeff/stanford-295-talk.pdf)
+'''
+
+          readme = readme.replace(marker, "\n" + translated.strip() + "\n" + marker, 1)
+
+          old_status = "- [ ] apêndices;"
+          new_status = (
+              "- [x] apêndice: tabela de potências de dois e números de latência;\n"
+              "- [ ] perguntas adicionais, arquiteturas e blogs de engenharia;\n"
+              "- [ ] créditos, informações de contato e licença;"
+          )
+          if old_status not in readme:
+              raise RuntimeError("Linha de status esperada não encontrada")
+          readme = readme.replace(old_status, new_status, 1)
+
+          glossary_marker = "| least privilege | princípio do menor privilégio |"
+          glossary_addition = """| least privilege | princípio do menor privilégio |
+| back-of-the-envelope estimate | estimativa de ordem de grandeza; apresentar o termo original quando útil |
+| power of two | potência de dois |
+| latency number | número de latência |
+| nanosecond / microsecond / millisecond | nanossegundo / microssegundo / milissegundo; preservar as unidades ns, us e ms em tabelas |"""
+          if glossary_marker not in contributing:
+              raise RuntimeError("Marcador do glossário não encontrado")
+          contributing = contributing.replace(glossary_marker, glossary_addition, 1)
+
+          readme_path.write_text(readme.rstrip() + "\n", encoding="utf-8")
+          contributing_path.write_text(contributing.rstrip() + "\n", encoding="utf-8")
+          PY
+
+      - name: Validar alterações
+        shell: bash
+        run: |
+          grep -q '<a id="apendice"></a>' README-pt-BR.md
+          grep -q '### Tabela de potências de dois' README-pt-BR.md
+          grep -q '### Números de latência que todo programador deve conhecer' README-pt-BR.md
+          grep -q '\[x\] apêndice: tabela de potências de dois e números de latência' README-pt-BR.md
+          grep -q 'back-of-the-envelope estimate' CONTRIBUTING-pt-BR.md
+          ! grep -q 'README.md#appendix' README-pt-BR.md
+          ! grep -q 'README.md#powers-of-two-table' README-pt-BR.md
+          ! grep -q 'README.md#latency-numbers-every-programmer-should-know' README-pt-BR.md
+
+      - name: Commitar tradução
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README-pt-BR.md CONTRIBUTING-pt-BR.md
+          if git diff --cached --quiet; then
+            echo "Nenhuma alteração pendente"
+            exit 0
+          fi
+          git commit -m "docs(pt-BR): traduz apêndice e números de latência"
+          git push origin HEAD:docs/pt-br-translation
