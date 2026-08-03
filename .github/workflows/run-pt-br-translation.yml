@@ -1,0 +1,67 @@
+name: Executar tradução pt-BR temporária
+
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - edited
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-translation:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.ref == 'docs/pt-br-translation'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout da branch de tradução
+        uses: actions/checkout@v4
+        with:
+          ref: docs/pt-br-translation
+          fetch-depth: 0
+
+      - name: Extrair e executar script de tradução
+        shell: bash
+        run: |
+          git show 6f97028e86aa544f7aaeae035944f3771736e0f7:.github/workflows/translate-communication-pt-br.yml > /tmp/translation-workflow.yml
+          python - <<'PY'
+          from pathlib import Path
+
+          workflow = Path('/tmp/translation-workflow.yml').read_text(encoding='utf-8')
+          start_marker = "          python - <<'PY'\n"
+          end_marker = "\n          PY\n\n      - name: Validar alterações"
+          if start_marker not in workflow or end_marker not in workflow:
+              raise RuntimeError('Bloco Python da tradução não encontrado')
+          script = workflow.split(start_marker, 1)[1].split(end_marker, 1)[0]
+          lines = script.splitlines()
+          normalized = '\n'.join(line[10:] if line.startswith('          ') else line for line in lines)
+          Path('/tmp/apply_translation.py').write_text(normalized + '\n', encoding='utf-8')
+          PY
+          python /tmp/apply_translation.py
+
+      - name: Validar alterações
+        shell: bash
+        run: |
+          grep -q '<a id="comunicacao"></a>' README-pt-BR.md
+          grep -q '### Protocolo de Transferência de Hipertexto — HTTP' README-pt-BR.md
+          grep -q '### Protocolo de Controle de Transmissão — TCP' README-pt-BR.md
+          grep -q '### Protocolo de Datagrama do Usuário — UDP' README-pt-BR.md
+          grep -q '### Chamada de Procedimento Remoto — RPC' README-pt-BR.md
+          grep -q '### Transferência de Estado Representacional — REST' README-pt-BR.md
+          grep -q '\[x\] comunicação: HTTP, TCP, UDP, RPC e REST' README-pt-BR.md
+          grep -q 'Representational State Transfer (REST)' CONTRIBUTING-pt-BR.md
+
+      - name: Commitar tradução
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README-pt-BR.md CONTRIBUTING-pt-BR.md
+          if git diff --cached --quiet; then
+            echo "Nenhuma alteração pendente"
+            exit 0
+          fi
+          git commit -m "docs(pt-BR): traduz comunicação e protocolos"
+          git push origin HEAD:docs/pt-br-translation
