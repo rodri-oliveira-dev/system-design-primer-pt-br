@@ -178,6 +178,13 @@ Use como referência as decisões já registradas no PR de integração. Entre e
 | wide column store | armazenamento em colunas largas |
 | graph database | banco de dados de grafos |
 | soft state | estado flexível — soft state |
+| cache-aside | cache-aside |
+| write-through | write-through |
+| write-behind / write-back | write-behind / write-back |
+| refresh-ahead | refresh-ahead |
+| message queue | fila de mensagens |
+| task queue | fila de tarefas |
+| back pressure | backpressure; apresentar “contrapressão” na definição |
 
 Caso um termo ainda não tenha uma tradução definida, registre a decisão no PR para que ela possa ser revisada e reutilizada nas demais seções.
 
