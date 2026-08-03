@@ -87,7 +87,7 @@ Sinta-se à vontade para enviar pull requests para ajudar a:
 
 O conteúdo que ainda precisa de melhorias está indicado como [em desenvolvimento](README.md#under-development) na versão original.
 
-Antes de contribuir, consulte as [diretrizes de contribuição](CONTRIBUTING.md).
+Antes de contribuir com a tradução, consulte as [diretrizes de contribuição em português brasileiro](CONTRIBUTING-pt-BR.md). Para as regras gerais do projeto original, consulte o [`CONTRIBUTING.md`](CONTRIBUTING.md) em inglês.
 
 ## Índice de tópicos de design de sistemas
 
