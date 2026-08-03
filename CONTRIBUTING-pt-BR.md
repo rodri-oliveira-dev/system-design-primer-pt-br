@@ -159,11 +159,18 @@ Use como referência as decisões já registradas no PR de integração. Entre e
 | failover | failover |
 | sharding | particionamento horizontal — sharding |
 | load balancer | balanceador de carga |
+| reverse proxy | proxy reverso |
 | application layer | camada de aplicação |
+| service discovery | descoberta de serviços |
 | availability | disponibilidade |
 | consistency | consistência |
 | partition tolerance | tolerância a partições |
-| RDBMS | SGBDR, mantendo a sigla original quando necessária |
+| relational database management system (RDBMS) | sistema gerenciador de banco de dados relacional — SGBDR |
+| master-slave replication | replicação master-slave |
+| master-master replication | replicação master-master |
+| federation | federação; apresentar “particionamento funcional” na definição |
+| denormalization | desnormalização |
+| SQL tuning | otimização de SQL |
 
 Caso um termo ainda não tenha uma tradução definida, registre a decisão no PR para que ela possa ser revisada e reutilizada nas demais seções.
 
