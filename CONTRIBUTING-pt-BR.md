@@ -178,6 +178,23 @@ Use como referência as decisões já registradas no PR de integração. Entre e
 | wide column store | armazenamento em colunas largas |
 | graph database | banco de dados de grafos |
 | soft state | estado flexível — soft state |
+| Hypertext Transfer Protocol (HTTP) | Protocolo de Transferência de Hipertexto — HTTP |
+| Transmission Control Protocol (TCP) | Protocolo de Controle de Transmissão — TCP |
+| User Datagram Protocol (UDP) | Protocolo de Datagrama do Usuário — UDP |
+| Remote Procedure Call (RPC) | Chamada de Procedimento Remoto — RPC |
+| Representational State Transfer (REST) | Transferência de Estado Representacional — REST |
+| stateless | stateless; explicar como “sem estado” quando necessário |
+| handshake | handshake |
+| acknowledgement | confirmação — acknowledgement |
+| connection pool | pool de conexões |
+| security | segurança |
+| encryption in transit | criptografia em trânsito |
+| encryption at rest | criptografia em repouso |
+| input sanitization | validação e sanitização de entradas |
+| cross-site scripting (XSS) | cross-site scripting — XSS |
+| SQL injection | injeção de SQL |
+| parameterized query | consulta parametrizada |
+| least privilege | princípio do menor privilégio |
 | cache-aside | cache-aside |
 | write-through | write-through |
 | write-behind / write-back | write-behind / write-back |
