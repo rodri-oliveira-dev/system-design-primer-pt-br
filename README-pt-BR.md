@@ -57,7 +57,7 @@ Os [baralhos de flashcards do Anki](https://apps.ankiweb.net/) disponibilizados 
 
 * [Baralho de design de sistemas](https://github.com/donnemartin/system-design-primer/tree/master/resources/flash_cards/System%20Design.apkg)
 * [Baralho de exercícios de design de sistemas](https://github.com/donnemartin/system-design-primer/tree/master/resources/flash_cards/System%20Design%20Exercises.apkg)
-* [Baralho de exercícios de design orientado a objetos](https://github.com/donnemartin/system-design-primer/tree/master/resources/flash_cards/OO%20Design.apkg)
+* [Baralho de exercícios de design orientado a objetos](https://github.com/donnemartin/interactive-coding-challenges/tree/master/anki_cards/Coding.apkg)
 
 Ótimo para estudar durante deslocamentos ou quando estiver fora de casa.
 
@@ -144,12 +144,12 @@ Antes de contribuir com a tradução, consulte as [diretrizes de contribuição 
         * [Particionamento horizontal — sharding](#particionamento-horizontal-sharding)
         * [Desnormalização](#desnormalizacao)
         * [Otimização de SQL](#otimizacao-de-sql)
-    * [NoSQL](README.md#nosql)
-        * [Armazenamento chave-valor](README.md#key-value-store)
-        * [Armazenamento de documentos](README.md#document-store)
-        * [Armazenamento em colunas largas](README.md#wide-column-store)
-        * [Banco de dados de grafos](README.md#graph-database)
-    * [SQL ou NoSQL](README.md#sql-or-nosql)
+    * [NoSQL](#nosql)
+        * [Armazenamento chave-valor](#armazenamento-chave-valor)
+        * [Armazenamento de documentos](#armazenamento-de-documentos)
+        * [Armazenamento em colunas largas](#armazenamento-em-colunas-largas)
+        * [Banco de dados de grafos](#banco-de-dados-de-grafos)
+    * [SQL ou NoSQL](#sql-ou-nosql)
 * [Cache](README.md#cache)
     * [Cache no cliente](README.md#client-caching)
     * [Cache em CDN](README.md#cdn-caching)
@@ -726,7 +726,7 @@ O Pinterest, por exemplo, poderia possuir microsserviços para perfil de usuári
 <a id="descoberta-de-servicos"></a>
 ### Descoberta de serviços
 
-Sistemas como [Consul](https://www.consul.io/docs/index.html), [Etcd](https://coreos.com/etcd/docs/latest) e [Zookeeper](http://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper) podem ajudar os serviços a se encontrar, mantendo registros de nomes, endereços e portas. [Health checks](https://www.consul.io/intro/getting-started/checks.html) ajudam a verificar a integridade dos serviços e frequentemente utilizam um endpoint [HTTP](README.md#hypertext-transfer-protocol-http). Consul e Etcd também possuem um [armazenamento chave-valor](README.md#key-value-store) integrado, útil para guardar valores de configuração e outros dados compartilhados.
+Sistemas como [Consul](https://www.consul.io/docs/index.html), [Etcd](https://coreos.com/etcd/docs/latest) e [Zookeeper](http://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper) podem ajudar os serviços a se encontrar, mantendo registros de nomes, endereços e portas. [Health checks](https://www.consul.io/intro/getting-started/checks.html) ajudam a verificar a integridade dos serviços e frequentemente utilizam um endpoint [HTTP](README.md#hypertext-transfer-protocol-http). Consul e Etcd também possuem um [armazenamento chave-valor](#armazenamento-chave-valor) integrado, útil para guardar valores de configuração e outros dados compartilhados.
 
 ### Desvantagens da camada de aplicação
 
@@ -933,6 +933,153 @@ Os resultados de benchmarks e profiling podem indicar as otimizações a seguir.
 * [How do null values affect performance?](http://stackoverflow.com/questions/1017239/how-do-null-values-affect-performance-in-a-database-search)
 * [Slow query log](http://dev.mysql.com/doc/refman/5.7/en/slow-query-log.html)
 
+<a id="nosql"></a>
+### NoSQL
+
+NoSQL reúne modelos de armazenamento nos quais os dados podem ser representados em um **armazenamento chave-valor**, **armazenamento de documentos**, **armazenamento em colunas largas** ou **banco de dados de grafos**. Em geral, os dados são desnormalizados e os joins são realizados pelo código da aplicação. Muitos bancos NoSQL não oferecem transações ACID completas e favorecem a [consistência eventual](#consistência-eventual).
+
+A sigla **BASE** é frequentemente utilizada para descrever propriedades de bancos NoSQL. Em comparação com o [teorema CAP](#teorema-cap), BASE prioriza disponibilidade em vez de consistência.
+
+* **Basicamente disponível — Basically available** — o sistema garante disponibilidade.
+* **Estado flexível — Soft state** — o estado do sistema pode mudar ao longo do tempo, mesmo sem novas entradas.
+* **Consistência eventual — Eventual consistency** — o sistema se tornará consistente depois de determinado período, desde que não receba novas entradas durante esse intervalo.
+
+Além de escolher entre [SQL ou NoSQL](#sql-ou-nosql), é importante compreender qual categoria de banco NoSQL atende melhor aos casos de uso. As próximas seções apresentam **armazenamentos chave-valor**, **armazenamentos de documentos**, **armazenamentos em colunas largas** e **bancos de dados de grafos**.
+
+<a id="armazenamento-chave-valor"></a>
+#### Armazenamento chave-valor
+
+> Abstração: tabela hash
+
+Um armazenamento chave-valor normalmente oferece leituras e escritas em `O(1)` e costuma utilizar memória ou SSD como base. Esses armazenamentos podem manter as chaves em [ordem lexicográfica](https://en.wikipedia.org/wiki/Lexicographical_order), permitindo recuperar intervalos de chaves de maneira eficiente. Também podem associar metadados aos valores armazenados.
+
+Armazenamentos chave-valor oferecem alto desempenho e são utilizados com frequência em modelos de dados simples ou em dados que mudam rapidamente, como uma camada de cache em memória. Como disponibilizam um conjunto limitado de operações, a complexidade é transferida para a camada de aplicação quando são necessárias operações adicionais.
+
+O modelo chave-valor serve como base para sistemas mais complexos, como armazenamentos de documentos e, em alguns casos, bancos de dados de grafos.
+
+##### Fontes e leituras complementares: armazenamento chave-valor
+
+* [Key-value database](https://en.wikipedia.org/wiki/Key-value_database)
+* [Disadvantages of key-value stores](http://stackoverflow.com/questions/4056093/what-are-the-disadvantages-of-using-a-key-value-table-over-nullable-columns-or)
+* [Redis architecture](http://qnimate.com/overview-of-redis-architecture/)
+* [Memcached architecture](https://adayinthelifeof.nl/2011/02/06/memcache-internals/)
+
+<a id="armazenamento-de-documentos"></a>
+#### Armazenamento de documentos
+
+> Abstração: armazenamento chave-valor com documentos armazenados como valores
+
+Um armazenamento de documentos é organizado em torno de documentos, como XML, JSON ou dados binários, nos quais cada documento reúne todas as informações de determinado objeto. Esses armazenamentos oferecem APIs ou linguagens de consulta capazes de pesquisar a estrutura interna do próprio documento. *Muitos armazenamentos chave-valor também oferecem recursos para trabalhar com metadados dos valores, tornando menos nítida a fronteira entre essas duas categorias.*
+
+Conforme a implementação, os documentos são organizados em coleções, tags, metadados ou diretórios. Embora possam ser agrupados, documentos da mesma coleção podem conter campos completamente diferentes.
+
+Alguns armazenamentos de documentos, como [MongoDB](https://www.mongodb.com/mongodb-architecture) e [CouchDB](https://blog.couchdb.org/2016/08/01/couchdb-2-0-architecture/), também oferecem linguagens semelhantes a SQL para consultas complexas. O [DynamoDB](http://www.read.seas.harvard.edu/~kohler/class/cs239-w08/decandia07dynamo.pdf) oferece suporte tanto ao modelo chave-valor quanto a documentos.
+
+Armazenamentos de documentos oferecem grande flexibilidade e são utilizados com frequência para dados cuja estrutura muda ocasionalmente.
+
+##### Fontes e leituras complementares: armazenamento de documentos
+
+* [Document-oriented database](https://en.wikipedia.org/wiki/Document-oriented_database)
+* [MongoDB architecture](https://www.mongodb.com/mongodb-architecture)
+* [CouchDB architecture](https://blog.couchdb.org/2016/08/01/couchdb-2-0-architecture/)
+* [Elasticsearch architecture](https://www.elastic.co/blog/found-elasticsearch-from-the-bottom-up)
+
+<a id="armazenamento-em-colunas-largas"></a>
+#### Armazenamento em colunas largas
+
+<p align="center">
+  <img src="images/n16iOGk.png">
+  <br/>
+  <i><a href="http://blog.grio.com/2015/11/sql-nosql-a-brief-history.html">Fonte: SQL & NoSQL, a brief history</a></i>
+</p>
+
+> Abstração: mapa aninhado `ColumnFamily<RowKey, Columns<ColKey, Value, Timestamp>>`
+
+A unidade básica de dados em um armazenamento em colunas largas é uma coluna, composta por nome e valor. Colunas podem ser agrupadas em famílias de colunas, de forma análoga a tabelas SQL. Superfamílias de colunas podem agrupar várias famílias. Cada coluna é acessada de forma independente por uma chave de linha; colunas com a mesma chave formam uma linha. Cada valor contém um timestamp utilizado para versionamento e resolução de conflitos.
+
+O Google apresentou o [Bigtable](http://www.read.seas.harvard.edu/~kohler/class/cs239-w08/chang06bigtable.pdf), primeiro armazenamento em colunas largas, que influenciou o [HBase](https://www.edureka.co/blog/hbase-architecture/) open source, frequentemente utilizado no ecossistema Hadoop, e o [Cassandra](http://docs.datastax.com/en/cassandra/3.0/cassandra/architecture/archIntro.html), criado pelo Facebook. Sistemas como Bigtable, HBase e Cassandra mantêm as chaves em ordem lexicográfica, permitindo recuperar intervalos específicos com eficiência.
+
+Armazenamentos em colunas largas oferecem alta disponibilidade e elevada escalabilidade. São utilizados com frequência em conjuntos de dados muito grandes.
+
+##### Fontes e leituras complementares: armazenamento em colunas largas
+
+* [SQL & NoSQL, a brief history](http://blog.grio.com/2015/11/sql-nosql-a-brief-history.html)
+* [Bigtable architecture](http://www.read.seas.harvard.edu/~kohler/class/cs239-w08/chang06bigtable.pdf)
+* [HBase architecture](https://www.edureka.co/blog/hbase-architecture/)
+* [Cassandra architecture](http://docs.datastax.com/en/cassandra/3.0/cassandra/architecture/archIntro.html)
+
+<a id="banco-de-dados-de-grafos"></a>
+#### Banco de dados de grafos
+
+<p align="center">
+  <img src="images/fNcl65g.png">
+  <br/>
+  <i><a href="https://en.wikipedia.org/wiki/File:GraphDatabase_PropertyGraph.png">Fonte: Graph database</a></i>
+</p>
+
+> Abstração: grafo
+
+Em um banco de dados de grafos, cada nó representa um registro e cada aresta representa uma relação entre dois nós. Esses bancos são otimizados para representar relações complexas que, em um modelo relacional, poderiam exigir muitas chaves estrangeiras ou relações muitos-para-muitos.
+
+Bancos de dados de grafos oferecem alto desempenho para modelos com relações complexas, como redes sociais. São relativamente recentes e ainda não são utilizados tão amplamente quanto outros modelos; por isso, pode ser mais difícil encontrar ferramentas e recursos de desenvolvimento. Muitos bancos de grafos são acessados por [APIs REST](README.md#representational-state-transfer-rest).
+
+##### Fontes e leituras complementares: bancos de dados de grafos
+
+* [Graph database](https://en.wikipedia.org/wiki/Graph_database)
+* [Neo4j](https://neo4j.com/)
+* [FlockDB](https://blog.twitter.com/2010/introducing-flockdb)
+
+#### Fontes e leituras complementares: NoSQL
+
+* [Explanation of base terminology](http://stackoverflow.com/questions/3342497/explanation-of-base-terminology)
+* [NoSQL databases a survey and decision guidance](https://medium.com/baqend-blog/nosql-databases-a-survey-and-decision-guidance-ea7823a822d#.wskogqenq)
+* [Scalability](https://web.archive.org/web/20220602114024/https://www.lecloud.net/post/7994751381/scalability-for-dummies-part-2-database)
+* [Introduction to NoSQL](https://www.youtube.com/watch?v=qI_g07C_Q5I)
+* [NoSQL patterns](http://horicky.blogspot.com/2009/11/nosql-patterns.html)
+
+<a id="sql-ou-nosql"></a>
+### SQL ou NoSQL
+
+<p align="center">
+  <img src="images/wXGqG5f.png">
+  <br/>
+  <i><a href="https://www.infoq.com/articles/Transition-RDBMS-NoSQL/">Fonte: Transitioning from RDBMS to NoSQL</a></i>
+</p>
+
+Razões para utilizar **SQL**:
+
+* dados estruturados;
+* esquema rígido;
+* dados relacionais;
+* necessidade de joins complexos;
+* transações;
+* padrões bem estabelecidos de escalabilidade;
+* ecossistema mais maduro, incluindo profissionais, comunidade, código e ferramentas;
+* consultas por índice muito rápidas.
+
+Razões para utilizar **NoSQL**:
+
+* dados semiestruturados;
+* esquema dinâmico ou flexível;
+* dados não relacionais;
+* ausência de necessidade de joins complexos;
+* armazenamento de muitos terabytes ou petabytes de dados;
+* cargas de trabalho intensivas em dados;
+* throughput muito elevado de operações de entrada e saída — IOPS.
+
+Exemplos de dados adequados a NoSQL:
+
+* ingestão rápida de clickstream e logs;
+* rankings ou pontuações;
+* dados temporários, como um carrinho de compras;
+* tabelas acessadas com muita frequência, ou *hot tables*;
+* tabelas de metadados ou consulta.
+
+##### Fontes e leituras complementares: SQL ou NoSQL
+
+* [Scaling up to your first 10 million users](https://www.youtube.com/watch?v=kKjm4ehYiMs)
+* [SQL vs NoSQL differences](https://www.sitepoint.com/sql-vs-nosql-differences/)
+
 ## Status da tradução
 
 A tradução está sendo desenvolvida incrementalmente, mantendo a estrutura e o significado da versão original em inglês.
@@ -942,7 +1089,8 @@ A tradução está sendo desenvolvida incrementalmente, mantendo a estrutura e o
 - [x] fundamentos de escalabilidade, desempenho e disponibilidade;
 - [x] componentes de infraestrutura e camada de aplicação;
 - [x] bancos de dados relacionais, replicação e particionamento;
-- [ ] NoSQL, cache e processamento assíncrono;
+- [x] NoSQL e comparação entre SQL e NoSQL;
+- [ ] cache e processamento assíncrono;
 - [ ] comunicação, segurança e apêndices;
 - [ ] revisão técnica, linguística, de links e de âncoras.
 
