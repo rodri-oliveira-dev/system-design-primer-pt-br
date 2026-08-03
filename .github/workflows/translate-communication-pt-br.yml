@@ -6,6 +6,12 @@ on:
       - docs/pt-br-translation
     paths:
       - .github/workflows/translate-communication-pt-br.yml
+  pull_request:
+    branches:
+      - master
+    types:
+      - edited
+  workflow_dispatch:
 
 permissions:
   contents: write
