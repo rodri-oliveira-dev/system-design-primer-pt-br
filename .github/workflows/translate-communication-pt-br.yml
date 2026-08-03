@@ -1,0 +1,303 @@
+name: Aplicar tradução pt-BR de comunicação
+
+on:
+  push:
+    branches:
+      - docs/pt-br-translation
+    paths:
+      - .github/workflows/translate-communication-pt-br.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply-translation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout da branch de tradução
+        uses: actions/checkout@v4
+        with:
+          ref: docs/pt-br-translation
+          fetch-depth: 0
+
+      - name: Traduzir comunicação e atualizar referências
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          readme_path = Path("README-pt-BR.md")
+          contributing_path = Path("CONTRIBUTING-pt-BR.md")
+
+          readme = readme_path.read_text(encoding="utf-8")
+          contributing = contributing_path.read_text(encoding="utf-8")
+
+          if '<a id="comunicacao"></a>' in readme:
+              raise RuntimeError("A seção de comunicação já foi adicionada")
+
+          link_replacements = {
+              "README.md#communication": "#comunicacao",
+              "README.md#hypertext-transfer-protocol-http": "#protocolo-de-transferencia-de-hipertexto-http",
+              "README.md#transmission-control-protocol-tcp": "#protocolo-de-controle-de-transmissao-tcp",
+              "README.md#user-datagram-protocol-udp": "#protocolo-de-datagrama-do-usuario-udp",
+              "README.md#remote-procedure-call-rpc": "#chamada-de-procedimento-remoto-rpc",
+              "README.md#representational-state-transfer-rest": "#transferencia-de-estado-representacional-rest",
+          }
+
+          for old, new in link_replacements.items():
+              readme = readme.replace(old, new)
+
+          marker = "\n## Status da tradução\n"
+          if marker not in readme:
+              raise RuntimeError("Marcador de status não encontrado")
+
+          translated = r'''
+<a id="comunicacao"></a>
+## Comunicação
+
+<p align="center">
+  <img src="images/5KeocQs.jpg">
+  <br/>
+  <i><a href="http://www.escotal.com/osilayer.html">Fonte: OSI 7 layer model</a></i>
+</p>
+
+<a id="protocolo-de-transferencia-de-hipertexto-http"></a>
+### Protocolo de Transferência de Hipertexto — HTTP
+
+HTTP é um método para codificar e transportar dados entre um cliente e um servidor. É um protocolo de requisição e resposta: clientes enviam requisições, e servidores devolvem respostas com o conteúdo relevante e informações sobre o status de processamento. O HTTP é autocontido, permitindo que requisições e respostas atravessem diversos roteadores e servidores intermediários responsáveis por balanceamento de carga, cache, criptografia e compressão.
+
+Uma requisição HTTP básica é composta por um verbo, ou método, e um recurso, ou endpoint. A tabela a seguir apresenta verbos HTTP comuns:
+
+| Verbo | Descrição | Idempotente* | Seguro | Armazenável em cache |
+|---|---|---|---|---|
+| GET | Lê um recurso | Sim | Sim | Sim |
+| POST | Cria um recurso ou aciona um processo que trata dados | Não | Não | Sim, quando a resposta contém informações de validade |
+| PUT | Cria ou substitui um recurso | Sim | Não | Não |
+| PATCH | Atualiza parcialmente um recurso | Não | Não | Sim, quando a resposta contém informações de validade |
+| DELETE | Exclui um recurso | Sim | Não | Não |
+
+*Pode ser chamado várias vezes sem produzir efeitos diferentes.
+
+HTTP é um protocolo da camada de aplicação que depende de protocolos de nível inferior, como **TCP** e **UDP**.
+
+#### Fontes e leituras complementares: HTTP
+
+* [What is HTTP?](https://www.nginx.com/resources/glossary/http/)
+* [Difference between HTTP and TCP](https://www.quora.com/What-is-the-difference-between-HTTP-protocol-and-TCP-protocol)
+* [Difference between PUT and PATCH](https://laracasts.com/discuss/channels/general-discussion/whats-the-differences-between-put-and-patch?page=1)
+
+<a id="protocolo-de-controle-de-transmissao-tcp"></a>
+### Protocolo de Controle de Transmissão — TCP
+
+<p align="center">
+  <img src="images/JdAsdvG.jpg">
+  <br/>
+  <i><a href="http://www.wildbunny.co.uk/blog/2012/10/09/how-to-make-a-multi-player-game-part-1/">Fonte: How to make a multiplayer game</a></i>
+</p>
+
+TCP é um protocolo orientado a conexão utilizado sobre uma [rede IP](https://en.wikipedia.org/wiki/Internet_Protocol). A conexão é estabelecida e encerrada por meio de um [handshake](https://en.wikipedia.org/wiki/Handshaking). O protocolo garante que todos os pacotes enviados cheguem ao destino na ordem original e sem corrupção por meio de:
+
+* números de sequência e [campos de checksum](https://en.wikipedia.org/wiki/Transmission_Control_Protocol#Checksum_computation) em cada pacote;
+* pacotes de [confirmação — acknowledgement](https://en.wikipedia.org/wiki/Acknowledgement_(data_networks)) e retransmissão automática.
+
+Quando o remetente não recebe uma resposta correta, ele reenvia os pacotes. Depois de vários timeouts, a conexão é encerrada. O TCP também implementa [controle de fluxo](https://en.wikipedia.org/wiki/Flow_control_(data)) e [controle de congestionamento](https://en.wikipedia.org/wiki/Network_congestion#Congestion_control). Essas garantias introduzem atrasos e normalmente resultam em uma transmissão menos eficiente do que a realizada por UDP.
+
+Para manter throughput elevado, servidores web podem conservar um grande número de conexões TCP abertas, aumentando o consumo de memória. Manter muitas conexões abertas entre threads do servidor web e, por exemplo, um servidor [Memcached](https://memcached.org/) pode ser custoso. O [pool de conexões](https://en.wikipedia.org/wiki/Connection_pool) pode ajudar, assim como a adoção de UDP quando aplicável.
+
+TCP é útil para aplicações que exigem alta confiabilidade, mas são menos sensíveis ao tempo. Alguns exemplos incluem servidores web, comunicação com bancos de dados, SMTP, FTP e SSH.
+
+Prefira TCP a UDP quando:
+
+* todos os dados precisarem chegar intactos;
+* você quiser que o protocolo ajuste automaticamente o uso do throughput disponível na rede.
+
+<a id="protocolo-de-datagrama-do-usuario-udp"></a>
+### Protocolo de Datagrama do Usuário — UDP
+
+<p align="center">
+  <img src="images/yzDrJtA.jpg">
+  <br/>
+  <i><a href="http://www.wildbunny.co.uk/blog/2012/10/09/how-to-make-a-multi-player-game-part-1/">Fonte: How to make a multiplayer game</a></i>
+</p>
+
+UDP é um protocolo sem conexão. Os datagramas, equivalentes aos pacotes nesse contexto, recebem garantias apenas no nível individual do datagrama. Eles podem chegar ao destino fora de ordem ou nem sequer chegar. O UDP não oferece controle de congestionamento. Por não fornecer as garantias do TCP, normalmente é mais eficiente.
+
+O UDP permite broadcast, enviando datagramas a todos os dispositivos de uma sub-rede. Isso é útil com o [DHCP](https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol), pois o cliente ainda não recebeu um endereço IP e, portanto, não poderia estabelecer um fluxo TCP utilizando esse endereço.
+
+UDP é menos confiável, mas funciona bem em casos de uso em tempo real, como VoIP, videochamadas, streaming e jogos multiplayer em tempo real.
+
+Prefira UDP a TCP quando:
+
+* você precisar da menor latência possível;
+* dados atrasados forem piores do que dados perdidos;
+* você quiser implementar seu próprio mecanismo de correção de erros.
+
+#### Fontes e leituras complementares: TCP e UDP
+
+* [Networking for game programming](https://gafferongames.com/post/udp_vs_tcp/)
+* [Key differences between TCP and UDP protocols](http://www.cyberciti.biz/faq/key-differences-between-tcp-and-udp-protocols/)
+* [Difference between TCP and UDP](http://stackoverflow.com/questions/5970383/difference-between-tcp-and-udp)
+* [Transmission control protocol](https://en.wikipedia.org/wiki/Transmission_Control_Protocol)
+* [User datagram protocol](https://en.wikipedia.org/wiki/User_Datagram_Protocol)
+* [Scaling memcache at Facebook](http://www.cs.bu.edu/~jappavoo/jappavoo.github.com/451/papers/memcache-fb.pdf)
+
+<a id="chamada-de-procedimento-remoto-rpc"></a>
+### Chamada de Procedimento Remoto — RPC
+
+<p align="center">
+  <img src="images/iF4Mkb5.png">
+  <br/>
+  <i><a href="http://www.puncsky.com/blog/2016-02-13-crack-the-system-design-interview">Fonte: Crack the system design interview</a></i>
+</p>
+
+Em uma RPC, um cliente provoca a execução de um procedimento em outro espaço de endereçamento, normalmente em um servidor remoto. O procedimento é programado como se fosse uma chamada local, abstraindo do código cliente os detalhes da comunicação com o servidor. Chamadas remotas geralmente são mais lentas e menos confiáveis do que chamadas locais; por isso, é útil distingui-las. Entre os frameworks RPC conhecidos estão [Protobuf](https://developers.google.com/protocol-buffers/), [Thrift](https://thrift.apache.org/) e [Avro](https://avro.apache.org/docs/current/).
+
+RPC utiliza o modelo de requisição e resposta:
+
+* **Programa cliente** — chama o procedimento stub do cliente. Os parâmetros são colocados na pilha como em uma chamada local.
+* **Procedimento stub do cliente** — serializa, ou empacota, o identificador do procedimento e seus argumentos em uma mensagem de requisição.
+* **Módulo de comunicação do cliente** — o sistema operacional envia a mensagem do cliente ao servidor.
+* **Módulo de comunicação do servidor** — o sistema operacional entrega os pacotes recebidos ao procedimento stub do servidor.
+* **Procedimento stub do servidor** — desserializa os dados, chama o procedimento correspondente ao identificador e fornece os argumentos recebidos.
+* A resposta do servidor repete as etapas anteriores na ordem inversa.
+
+Exemplos de chamadas RPC:
+
+```
+GET /someoperation?data=anId
+
+POST /anotheroperation
+{
+  "data":"anId";
+  "anotherdata": "another value"
+}
+```
+
+RPC concentra-se em expor comportamentos. RPCs são utilizadas com frequência na comunicação interna por motivos de desempenho, pois permitem criar chamadas nativas ajustadas aos casos de uso.
+
+Escolha uma biblioteca nativa, também chamada de SDK, quando:
+
+* você conhecer a plataforma de destino;
+* quiser controlar como sua lógica será acessada;
+* quiser controlar como os erros serão tratados fora da biblioteca;
+* desempenho e experiência do usuário final forem as principais prioridades.
+
+APIs HTTP que seguem **REST** são utilizadas com mais frequência como APIs públicas.
+
+#### Desvantagens de RPC
+
+* Clientes RPC ficam fortemente acoplados à implementação do serviço.
+* Uma nova API precisa ser definida para cada nova operação ou caso de uso.
+* A depuração de RPC pode ser difícil.
+* Nem sempre é possível aproveitar tecnologias existentes sem adaptações. Por exemplo, pode ser necessário trabalho adicional para garantir que [chamadas RPC sejam armazenadas corretamente em cache](https://web.archive.org/web/20170608193645/http://etherealbits.com/2012/12/debunking-the-myths-of-rpc-rest/) por servidores como o [Squid](http://www.squid-cache.org/).
+
+<a id="transferencia-de-estado-representacional-rest"></a>
+### Transferência de Estado Representacional — REST
+
+REST é um estilo arquitetural que estabelece um modelo cliente-servidor no qual o cliente atua sobre um conjunto de recursos administrados pelo servidor. O servidor fornece representações dos recursos e ações que permitem manipulá-los ou obter novas representações. Toda comunicação deve ser stateless e armazenável em cache.
+
+Uma interface RESTful possui quatro características:
+
+* **Identificação dos recursos — URI no HTTP** — utilize a mesma URI independentemente da operação.
+* **Manipulação por representações — verbos no HTTP** — utilize verbos, cabeçalhos e corpo.
+* **Mensagens de erro autodescritivas — status da resposta HTTP** — utilize códigos de status em vez de criar mecanismos próprios.
+* **[HATEOAS](http://restcookbook.com/Basics/hateoas/) — interface HTML para HTTP** — o serviço web deve ser completamente acessível por um navegador.
+
+Exemplos de chamadas REST:
+
+```
+GET /someresources/anId
+
+PUT /someresources/anId
+{"anotherdata": "another value"}
+```
+
+REST concentra-se em expor dados. Ele reduz o acoplamento entre cliente e servidor e é utilizado com frequência em APIs HTTP públicas. REST adota uma forma mais genérica e uniforme de expor recursos por URIs, [representações por cabeçalhos](https://github.com/for-GET/know-your-http-well/blob/master/headers.md) e ações por verbos como GET, POST, PUT, DELETE e PATCH. Por ser stateless, REST é adequado à escalabilidade horizontal e ao particionamento.
+
+#### Desvantagens de REST
+
+* Como REST se concentra em expor dados, pode não ser uma boa opção quando os recursos não são organizados naturalmente ou acessados por uma hierarquia simples. Por exemplo, não é fácil expressar como caminho a consulta de todos os registros atualizados na última hora que correspondam a determinado conjunto de eventos. Em REST, isso provavelmente seria implementado com uma combinação de caminho da URI, parâmetros de consulta e, possivelmente, corpo da requisição.
+* REST normalmente utiliza poucos verbos, como GET, POST, PUT, DELETE e PATCH, que nem sempre se ajustam ao caso de uso. Mover documentos expirados para uma pasta de arquivamento, por exemplo, pode não se encaixar de maneira clara nesses verbos.
+* A obtenção de recursos complexos com hierarquias aninhadas exige várias idas e voltas entre cliente e servidor para renderizar uma única visualização, como ao buscar uma publicação de blog e seus comentários. Em aplicações móveis sujeitas a condições variáveis de rede, essas várias viagens são especialmente indesejáveis.
+* Com o tempo, novos campos podem ser adicionados à resposta de uma API. Clientes antigos passam a receber todos esses campos, inclusive os desnecessários, aumentando o tamanho do payload e a latência.
+
+<a id="comparacao-entre-chamadas-rpc-e-rest"></a>
+### Comparação entre chamadas RPC e REST
+
+| Operação | RPC | REST |
+|---|---|---|
+| Cadastro | **POST** /signup | **POST** /persons |
+| Desligamento | **POST** /resign<br/>{<br/>"personid": "1234"<br/>} | **DELETE** /persons/1234 |
+| Consultar uma pessoa | **GET** /readPerson?personid=1234 | **GET** /persons/1234 |
+| Consultar a lista de itens de uma pessoa | **GET** /readUsersItemsList?personid=1234 | **GET** /persons/1234/items |
+| Adicionar um item à lista de uma pessoa | **POST** /addItemToUsersItemsList<br/>{<br/>"personid": "1234";<br/>"itemid": "456"<br/>} | **POST** /persons/1234/items<br/>{<br/>"itemid": "456"<br/>} |
+| Atualizar um item | **POST** /modifyItem<br/>{<br/>"itemid": "456";<br/>"key": "value"<br/>} | **PUT** /items/456<br/>{<br/>"key": "value"<br/>} |
+| Excluir um item | **POST** /removeItem<br/>{<br/>"itemid": "456"<br/>} | **DELETE** /items/456 |
+
+<p align="center">
+  <i><a href="https://apihandyman.io/do-you-really-know-why-you-prefer-rest-over-rpc/">Fonte: Do you really know why you prefer REST over RPC</a></i>
+</p>
+
+#### Fontes e leituras complementares: REST e RPC
+
+* [Do you really know why you prefer REST over RPC](https://apihandyman.io/do-you-really-know-why-you-prefer-rest-over-rpc/)
+* [When are RPC-ish approaches more appropriate than REST?](http://programmers.stackexchange.com/a/181186)
+* [REST vs JSON-RPC](http://stackoverflow.com/questions/15056878/rest-vs-json-rpc)
+* [Debunking the myths of RPC and REST](https://web.archive.org/web/20170608193645/http://etherealbits.com/2012/12/debunking-the-myths-of-rpc-rest/)
+* [What are the drawbacks of using REST](https://www.quora.com/What-are-the-drawbacks-of-using-RESTful-APIs)
+* [Crack the system design interview](http://www.puncsky.com/blog/2016-02-13-crack-the-system-design-interview)
+* [Thrift](https://code.facebook.com/posts/1468950976659943/)
+* [Why REST for internal use and not RPC](http://arstechnica.com/civis/viewtopic.php?t=1190508)
+'''.strip("\n")
+
+          readme = readme.replace(marker, "\n" + translated + "\n\n## Status da tradução\n", 1)
+
+          old_status = "- [ ] comunicação, segurança e apêndices;"
+          new_status = "- [x] comunicação: HTTP, TCP, UDP, RPC e REST;\n- [ ] segurança e apêndices;"
+          if old_status not in readme:
+              raise RuntimeError("Linha de status esperada não encontrada")
+          readme = readme.replace(old_status, new_status, 1)
+
+          glossary_marker = "| soft state | estado flexível — soft state |"
+          glossary_addition = """| soft state | estado flexível — soft state |
+| Hypertext Transfer Protocol (HTTP) | Protocolo de Transferência de Hipertexto — HTTP |
+| Transmission Control Protocol (TCP) | Protocolo de Controle de Transmissão — TCP |
+| User Datagram Protocol (UDP) | Protocolo de Datagrama do Usuário — UDP |
+| Remote Procedure Call (RPC) | Chamada de Procedimento Remoto — RPC |
+| Representational State Transfer (REST) | Transferência de Estado Representacional — REST |
+| stateless | stateless; explicar como “sem estado” quando necessário |
+| handshake | handshake |
+| acknowledgement | confirmação — acknowledgement |
+| connection pool | pool de conexões |"""
+          if glossary_marker not in contributing:
+              raise RuntimeError("Marcador do glossário não encontrado")
+          contributing = contributing.replace(glossary_marker, glossary_addition, 1)
+
+          readme_path.write_text(readme.rstrip() + "\n", encoding="utf-8")
+          contributing_path.write_text(contributing.rstrip() + "\n", encoding="utf-8")
+          PY
+
+      - name: Validar alterações
+        shell: bash
+        run: |
+          grep -q '<a id="comunicacao"></a>' README-pt-BR.md
+          grep -q '### Protocolo de Transferência de Hipertexto — HTTP' README-pt-BR.md
+          grep -q '### Protocolo de Controle de Transmissão — TCP' README-pt-BR.md
+          grep -q '### Protocolo de Datagrama do Usuário — UDP' README-pt-BR.md
+          grep -q '### Chamada de Procedimento Remoto — RPC' README-pt-BR.md
+          grep -q '### Transferência de Estado Representacional — REST' README-pt-BR.md
+          grep -q '\[x\] comunicação: HTTP, TCP, UDP, RPC e REST' README-pt-BR.md
+          grep -q 'Representational State Transfer (REST)' CONTRIBUTING-pt-BR.md
+
+      - name: Commitar tradução
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README-pt-BR.md CONTRIBUTING-pt-BR.md
+          if git diff --cached --quiet; then
+            echo "Nenhuma alteração pendente"
+            exit 0
+          fi
+          git commit -m "docs(pt-BR): traduz comunicação e protocolos"
+          git push origin HEAD:docs/pt-br-translation
