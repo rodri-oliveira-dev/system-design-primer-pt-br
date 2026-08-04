@@ -634,7 +634,7 @@ Serviços como [CloudFlare](https://www.cloudflare.com/dns/) e [Route 53](https:
 <p align="center">
   <img src="images/h9TAuGI.jpg">
   <br/>
-  <i><a href="https://www.creative-artworks.eu/why-use-a-content-delivery-network-cdn/">Fonte: Why use a CDN</a></i>
+  <i><a href="https://www.cloudflare.com/pt-br/learning/cdn/cdn-benefits/">Referência: benefícios da CDN</a></i>
 </p>
 
 Uma rede de distribuição de conteúdo (CDN) é uma rede globalmente distribuída de servidores proxy que entrega conteúdo a partir de locais mais próximos do usuário. Em geral, arquivos estáticos, como HTML, CSS, JavaScript, fotos e vídeos, são servidos por uma CDN, embora algumas CDNs, como o Amazon CloudFront, também ofereçam suporte a conteúdo dinâmico. A resolução DNS do site informa aos clientes qual servidor deve ser consultado.
@@ -807,7 +807,7 @@ Workers na camada de aplicação também ajudam a viabilizar o [assincronismo](#
 <a id="microsservicos"></a>
 ### Microsserviços
 
-Relacionados a essa discussão estão os [microsserviços](https://en.wikipedia.org/wiki/Microservices), que podem ser descritos como um conjunto de serviços pequenos, modulares e implantáveis de forma independente. Cada serviço executa um processo próprio e se comunica por um mecanismo leve e bem definido para atender a um objetivo de negócio.<sup><a href="https://smartbear.com/learn/api-design/what-are-microservices">1</a></sup>
+Relacionados a essa discussão estão os [microsserviços](https://en.wikipedia.org/wiki/Microservices), que podem ser descritos como um conjunto de serviços pequenos, modulares e implantáveis de forma independente. Cada serviço executa um processo próprio e se comunica por um mecanismo leve e bem definido para atender a um objetivo de negócio.<sup><a href="https://smartbear.com/learn/api-design/microservices/?lang=en-us">1</a></sup>
 
 O Pinterest, por exemplo, poderia possuir microsserviços para perfil de usuário, seguidores, feed, pesquisa, upload de fotos e outras funções.
 
@@ -1049,7 +1049,7 @@ O modelo chave-valor serve como base para sistemas mais complexos, como armazena
 
 * [Key-value database](https://en.wikipedia.org/wiki/Key-value_database)
 * [Disadvantages of key-value stores](http://stackoverflow.com/questions/4056093/what-are-the-disadvantages-of-using-a-key-value-table-over-nullable-columns-or)
-* [Redis architecture](http://qnimate.com/overview-of-redis-architecture/)
+* [Redis internals](https://redis.io/docs/latest/operate/oss_and_stack/reference/internals/)
 * [Memcached architecture](https://adayinthelifeof.nl/2011/02/06/memcache-internals/)
 
 <a id="armazenamento-de-documentos"></a>
@@ -1429,7 +1429,7 @@ Quando as filas crescem de maneira significativa, seu tamanho pode ultrapassar a
 <p align="center">
   <img src="images/5KeocQs.jpg">
   <br/>
-  <i><a href="http://www.escotal.com/osilayer.html">Fonte: OSI 7 layer model</a></i>
+  <i><a href="https://www.cloudflare.com/pt-br/learning/ddos/glossary/open-systems-interconnection-model-osi/">Referência: O que é o modelo OSI?</a></i>
 </p>
 
 <a id="protocolo-de-transferencia-de-hipertexto-http"></a>
@@ -1851,7 +1851,7 @@ Métricas úteis com base nos números anteriores:
 * [Paypal Developer Blog](https://developer.paypal.com/community/blog/)
 * [Pinterest Engineering Blog](https://medium.com/@Pinterest_Engineering)
 * [Reddit Blog](http://www.redditblog.com/)
-* [Salesforce Engineering Blog](https://developer.salesforce.com/blogs/engineering/)
+* [Salesforce Engineering Blog](https://engineering.salesforce.com/)
 * [Slack Engineering Blog](https://slack.engineering/)
 * [Spotify Labs](https://labs.spotify.com/)
 * [Stripe Engineering Blog](https://stripe.com/blog/engineering)
