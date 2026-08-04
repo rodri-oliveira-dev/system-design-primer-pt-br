@@ -1,0 +1,57 @@
+name: Aplicar correções de links pt-BR
+
+on:
+  pull_request_target:
+    branches:
+      - master
+    types:
+      - edited
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  apply-fixes:
+    if: >-
+      github.event.pull_request.number == 1 &&
+      github.event.pull_request.head.ref == 'docs/pt-br-translation' &&
+      contains(github.event.pull_request.title, '[corrigir links]')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout da branch de tradução
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Checkout dos scripts temporários da master
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          path: .automation-source
+
+      - name: Aplicar correções
+        run: python .automation-source/.github/scripts/apply_pt_br_link_fixes.py
+
+      - name: Validar alterações
+        run: |
+          test ! -f pt-br-link-render-audit.md
+          ! grep -Fq 'qnimate.com/overview-of-redis-architecture' README-pt-BR.md
+          ! grep -Fq 'www.escotal.com/osilayer.html' README-pt-BR.md
+          ! grep -Fq 'developer.salesforce.com/blogs/engineering' README-pt-BR.md
+          ! grep -Fq 'smartbear.com/learn/api-design/what-are-microservices' README-pt-BR.md
+          ! grep -Fq 'creative-artworks.eu/why-use-a-content-delivery-network-cdn' README-pt-BR.md
+
+      - name: Commitar correções
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add README-pt-BR.md pt-br-link-render-audit.md
+          if git diff --cached --quiet; then
+            echo 'Nenhuma alteração pendente.'
+            exit 0
+          fi
+          git commit -m 'docs(pt-BR): corrige links externos quebrados'
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
