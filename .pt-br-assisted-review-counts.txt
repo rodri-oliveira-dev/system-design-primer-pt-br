@@ -1,0 +1,14 @@
+Blocos encontrados: 3
+Divergências: 3
+
+[linguística/README]
+ESPERADO=2 ENCONTRADO=1 :: '[Zookeeper](http://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper)'
+ESPERADO=2 ENCONTRADO=1 :: 'Chamada de Procedimento Remoto — RPC'
+ESPERADO=2 ENCONTRADO=1 :: 'Transferência de Estado Representacional — REST'
+
+[linguística/CONTRIBUTING]
+OK
+
+[técnica/README]
+OK
+
