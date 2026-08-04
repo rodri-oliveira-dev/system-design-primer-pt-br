@@ -826,7 +826,7 @@ Sistemas como [Consul](https://www.consul.io/docs/index.html), [etcd](https://co
 * [Intro to architecting systems for scale](http://lethain.com/introduction-to-architecting-systems-for-scale)
 * [Crack the system design interview](http://www.puncsky.com/blog/2016-02-13-crack-the-system-design-interview)
 * [Service oriented architecture](https://en.wikipedia.org/wiki/Service-oriented_architecture)
-* [Introduction to Zookeeper](http://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper)
+* [Introduction to ZooKeeper](http://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper)
 * [Here's what you need to know about building microservices](https://cloudncode.wordpress.com/2016/07/22/msa-getting-started/)
 
 <a id="banco-de-dados"></a>
@@ -988,7 +988,7 @@ Os resultados de benchmarks e profiling podem indicar as otimizações a seguir.
 * Considere `CHAR` para campos realmente fixos e `VARCHAR` para comprimentos variáveis.
     * O impacto de desempenho e armazenamento depende do SGBDR, do conjunto de caracteres e do padrão de acesso.
 * Considere `TEXT` para grandes blocos de texto, como publicações de blog. Os recursos de busca textual dependem do SGBDR e dos índices configurados. O armazenamento físico de campos `TEXT` também varia conforme o mecanismo utilizado.
-* Use `INT` para valores inteiros; no MySQL, o intervalo depende de a coluna ser assinada (`SIGNED`) ou não assinada (`UNSIGNED`).
+* Use `INT` para valores inteiros; no MySQL, o intervalo depende de a coluna estar definida como assinada (`SIGNED`) ou não assinada (`UNSIGNED`).
 * Use `DECIMAL` para valores monetários, evitando erros de representação de ponto flutuante.
 * Evite armazenar `BLOBs` grandes; prefira armazenar a localização do objeto.
 * `VARCHAR(255)` é comum por razões históricas e de compatibilidade, mas o tamanho deve ser definido conforme o domínio dos dados e o conjunto de caracteres, não como padrão universal.
@@ -1403,7 +1403,7 @@ O **[Amazon SQS](https://aws.amazon.com/sqs/)** é um serviço gerenciado, mas p
 <a id="filas-de-tarefas"></a>
 ### Filas de tarefas
 
-Filas de tarefas recebem tarefas e seus dados relacionados, executam-nas e entregam os resultados. Elas podem oferecer agendamento e executar em segundo plano jobs que exigem grande capacidade computacional.
+Filas de tarefas recebem tarefas e seus dados relacionados, executam-nas e entregam os resultados. Elas podem oferecer agendamento e executar em segundo plano tarefas que exigem grande capacidade computacional.
 
 O **[Celery](https://docs.celeryproject.org/en/stable/)** oferece suporte a agendamento e é utilizado principalmente com Python.
 
@@ -1523,7 +1523,7 @@ Prefira UDP a TCP quando:
 
 Em uma RPC, um cliente solicita a execução de um procedimento em outro espaço de endereçamento, normalmente em um servidor remoto. O procedimento é programado como se fosse uma chamada local, abstraindo do código cliente os detalhes da comunicação com o servidor. Chamadas remotas geralmente são mais lentas e menos confiáveis do que chamadas locais; por isso, é útil distingui-las. Entre as tecnologias usadas em implementações RPC estão [Protocol Buffers](https://developers.google.com/protocol-buffers/), [Thrift](https://thrift.apache.org/) e [Avro](https://avro.apache.org/docs/current/).
 
-RPC utiliza o modelo de requisição e resposta:
+A RPC utiliza o modelo de requisição e resposta:
 
 * **Programa cliente** — chama o procedimento stub do cliente. Os parâmetros são colocados na pilha como em uma chamada local.
 * **Procedimento stub do cliente** — serializa, ou empacota, o identificador do procedimento e seus argumentos em uma mensagem de requisição.
