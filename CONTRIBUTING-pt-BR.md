@@ -119,7 +119,7 @@ Não direcione o PR para `master` enquanto o PR de integração da tradução pe
 
 A tradução deve ser natural em português brasileiro, mas não pode alterar conceitos, garantias, vantagens, desvantagens ou trade-offs apresentados no original.
 
-Quando uma frase parecer tecnicamente ambígua, compare-a com a versão inglesa e explique a decisão no pull request.
+Quando uma frase parecer tecnicamente ambígua, compare-a com a versão inglesa e explique a decisão no pull request. Correções de imprecisões técnicas presentes no original devem ser claramente identificadas e justificadas, sem alterar silenciosamente o escopo do conteúdo.
 
 ### Não traduza estes elementos
 
@@ -187,6 +187,9 @@ Use como referência as decisões já registradas no PR de integração. Entre e
 | handshake | handshake |
 | acknowledgement | confirmação — acknowledgement |
 | connection pool | pool de conexões |
+| health check | verificação de integridade — health check |
+| cache replacement policy | política de substituição de cache |
+| HATEOAS | hipermídia como motor do estado da aplicação — HATEOAS |
 | security | segurança |
 | encryption in transit | criptografia em trânsito |
 | encryption at rest | criptografia em repouso |

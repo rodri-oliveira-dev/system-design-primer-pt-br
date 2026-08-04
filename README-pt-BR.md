@@ -83,7 +83,7 @@ Sinta-se à vontade para enviar pull requests para ajudar a:
 * Corrigir erros;
 * Melhorar seções;
 * Adicionar novas seções;
-* [Traduzir](https://github.com/donnemartin/system-design-primer/issues/40).
+* [Revisar e manter a tradução](https://github.com/donnemartin/system-design-primer/issues/40).
 
 O conteúdo que ainda precisa de melhorias está indicado na seção [Em desenvolvimento](#em-desenvolvimento).
 
@@ -224,7 +224,7 @@ Comece de forma abrangente e aprofunde-se em algumas áreas. É útil conhecer u
 
 ## Como abordar uma pergunta de entrevista de design de sistemas
 
-> Como conduzir uma pergunta de entrevista de design de sistemas.
+> Como conduzir a discussão de uma pergunta de entrevista de design de sistemas.
 
 A entrevista de design de sistemas é uma **conversa aberta**. Espera-se que você conduza a discussão.
 
@@ -236,16 +236,16 @@ Colete os requisitos e delimite o problema. Faça perguntas para esclarecer os c
 
 * Quem utilizará o sistema?
 * Como essas pessoas utilizarão o sistema?
-* Quantos usuários existirão?
+* Quantos usuários o sistema terá?
 * O que o sistema deve fazer?
 * Quais são as entradas e saídas do sistema?
-* Qual volume de dados esperamos processar?
+* Qual volume de dados esperamos que o sistema processe?
 * Quantas requisições por segundo esperamos receber?
 * Qual é a proporção esperada entre leituras e escritas?
 
 ### Etapa 2: crie um design de alto nível
 
-Esboce um design de alto nível contendo todos os componentes importantes.
+Esboce um design de alto nível que inclua todos os componentes importantes.
 
 * Desenhe os principais componentes e suas conexões;
 * justifique suas decisões.
@@ -259,7 +259,7 @@ Aprofunde-se nos detalhes de cada componente central. Por exemplo, caso seja sol
     * colisões de hash;
     * SQL ou NoSQL;
     * esquema do banco de dados.
-* A conversão de uma URL com hash para a URL completa:
+* A conversão do hash de uma URL em sua URL completa:
     * consulta ao banco de dados.
 * O design da API e o design orientado a objetos.
 
@@ -276,7 +276,7 @@ Discuta possíveis soluções e trade-offs. Tudo envolve trade-offs. Trate os ga
 
 ### Cálculos de ordem de grandeza
 
-Talvez seja solicitado que você faça algumas estimativas manualmente. Consulte o [apêndice](#apendice) para acessar os seguintes recursos:
+Talvez você precise fazer algumas estimativas à mão. Consulte o [apêndice](#apendice) para acessar os seguintes recursos:
 
 * [Use back of the envelope calculations](http://highscalability.com/blog/2011/1/26/google-pro-tip-use-back-of-the-envelope-calculations-to-choo.html)
 * [Tabela de potências de dois](#tabela-de-potencias-de-dois)
@@ -465,14 +465,14 @@ Em um sistema computacional distribuído, é possível oferecer apenas duas das 
 <a id="cp-consistencia-e-tolerancia-a-particoes"></a>
 #### CP — consistência e tolerância a partições
 
-Aguardar uma resposta do nó isolado pela partição pode resultar em um erro de timeout. CP é uma boa escolha quando as necessidades do negócio exigem leituras e escritas atômicas.
+Aguardar a resposta de um nó isolado por uma partição de rede pode resultar em um erro de timeout. CP é uma boa escolha quando as necessidades do negócio exigem leituras e escritas atômicas.
 
 <a id="ap-disponibilidade-e-tolerancia-a-particoes"></a>
 #### AP — disponibilidade e tolerância a partições
 
 As respostas retornam a versão dos dados mais prontamente disponível em qualquer nó, que pode não ser a mais recente. As escritas podem levar algum tempo para se propagar depois que a partição é resolvida.
 
-AP é uma boa escolha quando o negócio admite [consistência eventual](#consistência-eventual) ou quando o sistema precisa continuar funcionando apesar de erros externos.
+AP é uma boa escolha quando o negócio admite [consistência eventual](#consistência-eventual) ou quando o sistema precisa continuar funcionando apesar de falhas externas.
 
 ### Fontes e leituras complementares
 
@@ -487,19 +487,19 @@ Quando existem várias cópias dos mesmos dados, é necessário decidir como sin
 
 ### Consistência fraca
 
-Depois de uma escrita, as leituras podem ou não enxergar a alteração. O sistema adota uma abordagem de melhor esforço.
+Depois de uma escrita, as leituras podem ou não refletir a alteração. O sistema adota uma abordagem de melhor esforço.
 
 Essa abordagem é encontrada em sistemas como o memcached. A consistência fraca funciona bem em casos de uso em tempo real, como VoIP, videochamadas e jogos multiplayer em tempo real. Por exemplo, ao perder o sinal por alguns segundos durante uma ligação, você não escuta o que foi falado durante a interrupção quando a conexão é restabelecida.
 
 ### Consistência eventual
 
-Depois de uma escrita, as leituras acabarão enxergando a alteração, normalmente em alguns milissegundos. Os dados são replicados de maneira assíncrona.
+Depois de uma escrita, as leituras acabarão refletindo a alteração, normalmente em alguns milissegundos. Os dados são replicados de maneira assíncrona.
 
 Essa abordagem é encontrada em sistemas como DNS e e-mail. A consistência eventual funciona bem em sistemas altamente disponíveis.
 
 ### Consistência forte
 
-Depois de uma escrita, as leituras enxergarão a alteração. Os dados são replicados de maneira síncrona.
+Depois de uma escrita, as leituras refletirão a alteração. Os dados são replicados de maneira síncrona.
 
 Essa abordagem é encontrada em sistemas de arquivos e SGBDRs. A consistência forte funciona bem em sistemas que precisam de transações.
 
@@ -517,7 +517,7 @@ Existem dois padrões complementares para oferecer alta disponibilidade: **failo
 
 No failover ativo-passivo, sinais de heartbeat são enviados entre o servidor ativo e o servidor passivo em espera. Quando o heartbeat é interrompido, o servidor passivo assume o endereço IP do servidor ativo e retoma o serviço.
 
-A duração da indisponibilidade depende de o servidor passivo já estar executando em espera *hot standby* ou precisar ser iniciado a partir de uma espera *cold standby*. Apenas o servidor ativo processa o tráfego.
+A duração da indisponibilidade depende de o servidor passivo já estar em execução no modo *hot standby* ou precisar ser iniciado a partir do modo *cold standby*. Apenas o servidor ativo processa o tráfego.
 
 O failover ativo-passivo também pode ser chamado de failover master-slave.
 
@@ -600,12 +600,12 @@ Caso `Foo` e `Bar` tenham, cada um, 99,9% de disponibilidade, a disponibilidade 
 
 Um Sistema de Nomes de Domínio (DNS) traduz um nome de domínio, como `www.example.com`, para um endereço IP.
 
-O DNS é hierárquico, com alguns servidores autoritativos no nível superior. Seu roteador ou provedor de internet fornece informações sobre quais servidores DNS devem ser consultados durante uma resolução. Servidores DNS de níveis inferiores armazenam mapeamentos em cache, que podem ficar desatualizados devido a atrasos na propagação do DNS. Os resultados também podem ser armazenados em cache pelo navegador ou sistema operacional durante um período determinado pelo [tempo de vida — time to live (TTL)](https://en.wikipedia.org/wiki/Time_to_live).
+O DNS é hierárquico, com alguns servidores autoritativos no nível superior. O roteador ou o provedor de internet informa quais servidores DNS devem ser consultados durante a resolução. Servidores DNS de níveis inferiores armazenam mapeamentos em cache, que podem ficar desatualizados devido a atrasos na propagação do DNS. Os resultados também podem ser armazenados em cache pelo navegador ou sistema operacional durante um período determinado pelo [tempo de vida — time to live (TTL)](https://en.wikipedia.org/wiki/Time_to_live).
 
 * **Registro NS — name server** — especifica os servidores DNS do domínio ou subdomínio.
 * **Registro MX — mail exchange** — especifica os servidores de e-mail que recebem mensagens.
 * **Registro A — address** — aponta um nome para um endereço IP.
-* **CNAME — canonical name** — aponta um nome para outro nome ou `CNAME`, como `example.com` para `www.example.com`, ou para um registro `A`.
+* **CNAME — canonical name** — aponta um nome para outro nome, que pode apontar para outro `CNAME` ou para um registro `A`, como no redirecionamento de `example.com` para `www.example.com`.
 
 Serviços como [CloudFlare](https://www.cloudflare.com/dns/) e [Route 53](https://aws.amazon.com/route53/) oferecem DNS gerenciado. Alguns serviços DNS podem rotear o tráfego por diferentes métodos:
 
@@ -639,7 +639,7 @@ Serviços como [CloudFlare](https://www.cloudflare.com/dns/) e [Route 53](https:
 
 Uma rede de distribuição de conteúdo (CDN) é uma rede globalmente distribuída de servidores proxy que entrega conteúdo a partir de locais mais próximos do usuário. Em geral, arquivos estáticos, como HTML, CSS, JavaScript, fotos e vídeos, são servidos por uma CDN, embora algumas CDNs, como o Amazon CloudFront, também ofereçam suporte a conteúdo dinâmico. A resolução DNS do site informa aos clientes qual servidor deve ser consultado.
 
-Servir conteúdo por CDNs pode melhorar significativamente o desempenho de duas maneiras:
+Distribuir conteúdo por meio de CDNs pode melhorar significativamente o desempenho de duas maneiras:
 
 * os usuários recebem conteúdo de data centers próximos;
 * seus servidores deixam de processar as requisições atendidas pela CDN.
@@ -683,7 +683,7 @@ Sites com muito tráfego funcionam bem com CDNs pull, pois o tráfego é distrib
 
 Balanceadores de carga distribuem as requisições recebidas dos clientes entre recursos computacionais, como servidores de aplicação e bancos de dados. Em cada caso, o balanceador retorna ao cliente apropriado a resposta produzida pelo recurso computacional. Balanceadores de carga são eficazes para:
 
-* impedir que requisições sejam enviadas a servidores não saudáveis;
+* impedir que requisições sejam enviadas a servidores com falhas ou indisponíveis;
 * impedir a sobrecarga de recursos;
 * ajudar a eliminar pontos únicos de falha.
 
@@ -714,9 +714,9 @@ Balanceadores de carga da camada 4 analisam informações da [camada de transpor
 <a id="balanceamento-de-carga-na-camada-7"></a>
 ### Balanceamento de carga na camada 7
 
-Balanceadores de carga da camada 7 analisam informações da [camada de aplicação](#comunicacao) para decidir como distribuir as requisições. Isso pode envolver o conteúdo de cabeçalhos, mensagens e cookies. Esses balanceadores encerram o tráfego de rede, leem a mensagem, tomam a decisão de balanceamento e abrem uma conexão com o servidor selecionado. Por exemplo, um balanceador da camada 7 pode direcionar tráfego de vídeo para servidores que hospedam vídeos e encaminhar tráfego sensível de cobrança para servidores com segurança reforçada.
+Balanceadores de carga da camada 7 analisam informações da [camada de aplicação](#comunicacao) para decidir como distribuir as requisições. Isso pode envolver o conteúdo de cabeçalhos, mensagens e cookies. Esses balanceadores terminam a conexão de rede, leem a mensagem, tomam a decisão de balanceamento e abrem uma nova conexão com o servidor selecionado. Por exemplo, um balanceador da camada 7 pode direcionar tráfego de vídeo para servidores que hospedam vídeos e encaminhar tráfego sensível de faturamento para servidores com segurança reforçada.
 
-Em troca de menor flexibilidade, o balanceamento na camada 4 exige menos tempo e recursos computacionais do que o balanceamento na camada 7, embora o impacto de desempenho possa ser pequeno em hardware comum moderno.
+Em troca de menor flexibilidade, o balanceamento na camada 4 exige menos tempo e recursos computacionais do que o balanceamento na camada 7, embora o impacto de desempenho possa ser pequeno em hardware moderno de uso geral.
 
 <a id="escalabilidade-horizontal"></a>
 ### Escalabilidade horizontal
@@ -726,7 +726,7 @@ Balanceadores de carga também auxiliam na escalabilidade horizontal, melhorando
 #### Desvantagens da escalabilidade horizontal
 
 * A escalabilidade horizontal introduz complexidade e exige a clonagem de servidores:
-    * os servidores devem ser stateless, sem armazenar dados relacionados ao usuário, como sessões ou fotos de perfil;
+    * os servidores devem ser stateless (sem estado), sem armazenar dados relacionados ao usuário, como sessões ou fotos de perfil;
     * as sessões podem ser armazenadas em um repositório centralizado, como um [banco de dados](#banco-de-dados), SQL ou NoSQL, ou um [cache](#cache) persistente, como Redis ou Memcached.
 * Servidores downstream, como caches e bancos de dados, precisam lidar com mais conexões simultâneas conforme os servidores upstream são escalados horizontalmente.
 
@@ -814,7 +814,7 @@ O Pinterest, por exemplo, poderia possuir microsserviços para perfil de usuári
 <a id="descoberta-de-servicos"></a>
 ### Descoberta de serviços
 
-Sistemas como [Consul](https://www.consul.io/docs/index.html), [Etcd](https://coreos.com/etcd/docs/latest) e [Zookeeper](http://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper) podem ajudar os serviços a se encontrar, mantendo registros de nomes, endereços e portas. [Health checks](https://www.consul.io/intro/getting-started/checks.html) ajudam a verificar a integridade dos serviços e frequentemente utilizam um endpoint [HTTP](#protocolo-de-transferencia-de-hipertexto-http). Consul e Etcd também possuem um [armazenamento chave-valor](#armazenamento-chave-valor) integrado, útil para guardar valores de configuração e outros dados compartilhados.
+Sistemas como [Consul](https://www.consul.io/docs/index.html), [Etcd](https://coreos.com/etcd/docs/latest) e [Zookeeper](http://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper) podem ajudar os serviços a se encontrar, mantendo registros de nomes, endereços e portas. [Verificações de integridade — health checks](https://www.consul.io/intro/getting-started/checks.html) ajudam a verificar a integridade dos serviços e frequentemente utilizam um endpoint [HTTP](#protocolo-de-transferencia-de-hipertexto-http). Consul e Etcd também possuem um [armazenamento chave-valor](#armazenamento-chave-valor) integrado, útil para guardar valores de configuração e outros dados compartilhados.
 
 ### Desvantagens da camada de aplicação
 
@@ -1177,7 +1177,7 @@ Exemplos de dados adequados a NoSQL:
   <i><a href="http://horicky.blogspot.com/2010/10/scalable-system-design-patterns.html">Fonte: Scalable system design patterns</a></i>
 </p>
 
-O uso de cache melhora o tempo de carregamento das páginas e pode reduzir a carga sobre servidores e bancos de dados. Nesse modelo, o componente responsável por despachar a requisição verifica primeiro se ela já foi realizada e tenta localizar um resultado anterior para devolvê-lo, evitando uma nova execução.
+O uso de cache melhora o tempo de carregamento das páginas e pode reduzir a carga sobre servidores e bancos de dados. Nesse modelo, o componente que atende à requisição verifica primeiro se existe um resultado anterior armazenado e o devolve, evitando uma nova execução.
 
 Bancos de dados normalmente se beneficiam de uma distribuição uniforme de leituras e escritas entre suas partições. Itens populares podem desequilibrar essa distribuição e causar gargalos. Colocar um cache à frente do banco de dados ajuda a absorver cargas desiguais e picos de tráfego.
 
@@ -1204,7 +1204,7 @@ Normalmente, o banco de dados já inclui algum nível de cache em sua configura�
 <a id="cache-na-aplicacao"></a>
 ### Cache na aplicação
 
-Caches em memória, como Memcached e Redis, são armazenamentos chave-valor posicionados entre a aplicação e o armazenamento de dados. Como as informações ficam na RAM, o acesso é muito mais rápido do que em bancos de dados tradicionais, nos quais os dados permanecem em disco. A RAM é mais limitada do que o disco; por isso, algoritmos de [invalidação de cache](https://en.wikipedia.org/wiki/Cache_algorithms), como [least recently used — LRU](https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)), ajudam a remover entradas *cold* e manter dados *hot* na memória.
+Caches em memória, como Memcached e Redis, são armazenamentos chave-valor posicionados entre a aplicação e o armazenamento de dados. Como as informações ficam na RAM, o acesso é muito mais rápido do que em bancos de dados tradicionais, nos quais os dados permanecem em disco. A RAM é mais limitada do que o disco; por isso, políticas de [substituição de cache](https://en.wikipedia.org/wiki/Cache_replacement_policies), como [least recently used — LRU](https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)), ajudam a remover entradas *cold* e manter dados *hot* na memória.
 
 O Redis também oferece recursos adicionais:
 
@@ -1218,7 +1218,7 @@ Existem vários níveis de cache, agrupados em duas categorias gerais: **consult
 * objetos serializáveis completos;
 * HTML completamente renderizado.
 
-Em geral, evite caches baseados em arquivos, pois eles dificultam a clonagem de servidores e o auto scaling.
+Em geral, evite caches baseados em arquivos, pois eles dificultam a clonagem de servidores e o auto scaling (escalabilidade automática).
 
 <a id="cache-no-nivel-de-consulta-ao-banco-de-dados"></a>
 ### Cache no nível de consulta ao banco de dados
@@ -1226,7 +1226,7 @@ Em geral, evite caches baseados em arquivos, pois eles dificultam a clonagem de 
 Ao consultar o banco de dados, gere um hash da consulta para utilizá-lo como chave e armazene o resultado no cache. Essa abordagem apresenta problemas de expiração:
 
 * é difícil remover do cache o resultado de consultas complexas;
-* quando um dado é alterado, como uma célula de uma tabela, é necessário remover todas as consultas armazenadas que possam conter o valor modificado.
+* quando um dado é alterado, como o valor de uma coluna em determinada linha, é necessário remover todas as consultas armazenadas que possam conter o valor modificado.
 
 <a id="cache-no-nivel-de-objeto"></a>
 ### Cache no nível de objeto
@@ -1234,7 +1234,7 @@ Ao consultar o banco de dados, gere um hash da consulta para utilizá-lo como ch
 Trate os dados como objetos, de forma semelhante ao código da aplicação. A aplicação monta o conjunto de dados obtido do banco como uma instância de classe ou uma estrutura de dados:
 
 * remova o objeto do cache quando os dados que o originaram forem alterados;
-* essa abordagem permite processamento assíncrono: workers montam objetos consumindo a versão mais recente armazenada em cache.
+* essa abordagem permite processamento assíncrono: workers montam objetos a partir da versão mais recente armazenada em cache.
 
 Exemplos do que pode ser armazenado em cache:
 
@@ -1298,7 +1298,7 @@ A aplicação utiliza o cache como seu principal armazenamento, lendo e escreven
 
 * a aplicação adiciona ou atualiza a entrada no cache;
 * o cache grava a entrada de forma síncrona no armazenamento de dados;
-* a operação retorna.
+* a operação é concluída.
 
 Código da aplicação:
 
@@ -1382,7 +1382,7 @@ O refresh-ahead pode reduzir a latência em comparação com read-through quando
   <i><a href="http://lethain.com/introduction-to-architecting-systems-for-scale/#platform_layer">Fonte: Intro to architecting systems for scale</a></i>
 </p>
 
-Fluxos assíncronos ajudam a reduzir o tempo das requisições em operações custosas que, de outra forma, seriam executadas no fluxo síncrono. Eles também permitem realizar antecipadamente trabalhos demorados, como agregações periódicas de dados.
+Fluxos assíncronos ajudam a reduzir o tempo das requisições em operações custosas que, de outra forma, seriam executadas no fluxo síncrono. Eles também permitem executar antecipadamente tarefas demoradas, como agregações periódicas de dados.
 
 <a id="filas-de-mensagens"></a>
 ### Filas de mensagens
@@ -1396,7 +1396,7 @@ O usuário não fica bloqueado e o job é processado em segundo plano. Durante e
 
 O **[Redis](https://redis.io/)** é útil como um message broker simples, mas mensagens podem ser perdidas.
 
-O **[RabbitMQ](https://www.rabbitmq.com/)** é popular, mas exige adaptação ao protocolo AMQP e o gerenciamento dos próprios nós.
+O **[RabbitMQ](https://www.rabbitmq.com/)** é popular, mas exige que a aplicação adote o protocolo AMQP e que a equipe gerencie os próprios nós.
 
 O **[Amazon SQS](https://aws.amazon.com/sqs/)** é um serviço gerenciado, mas pode apresentar alta latência e entregar a mesma mensagem mais de uma vez.
 
@@ -1410,7 +1410,7 @@ O **[Celery](https://docs.celeryproject.org/en/stable/)** oferece suporte a agen
 <a id="backpressure"></a>
 ### Backpressure
 
-Quando as filas crescem de maneira significativa, seu tamanho pode ultrapassar a capacidade da memória, provocando *cache misses*, leituras em disco e desempenho ainda menor. O [backpressure](http://mechanical-sympathy.blogspot.com/2012/05/apply-back-pressure-when-overloaded.html), ou contrapressão, ajuda a limitar o tamanho da fila, preservando throughput elevado e bons tempos de resposta para os jobs que já estão aguardando processamento. Quando a fila atinge seu limite, os clientes recebem uma indicação de servidor ocupado ou o status HTTP 503 e devem tentar novamente mais tarde. A repetição pode utilizar [backoff exponencial](https://en.wikipedia.org/wiki/Exponential_backoff).
+Quando as filas crescem de maneira significativa, seu tamanho pode ultrapassar a capacidade da memória, provocando *cache misses*, leituras em disco e desempenho ainda menor. O [backpressure](http://mechanical-sympathy.blogspot.com/2012/05/apply-back-pressure-when-overloaded.html), ou contrapressão, ajuda a limitar o tamanho da fila, preservando throughput elevado e bons tempos de resposta para os jobs que já estão aguardando processamento. Quando a fila atinge seu limite, os clientes recebem uma indicação de servidor ocupado ou o status HTTP 503 e devem tentar novamente mais tarde. As novas tentativas podem utilizar [backoff exponencial](https://en.wikipedia.org/wiki/Exponential_backoff).
 
 ### Desvantagens do assincronismo
 
@@ -1521,7 +1521,7 @@ Prefira UDP a TCP quando:
   <i><a href="http://www.puncsky.com/blog/2016-02-13-crack-the-system-design-interview">Fonte: Crack the system design interview</a></i>
 </p>
 
-Em uma RPC, um cliente provoca a execução de um procedimento em outro espaço de endereçamento, normalmente em um servidor remoto. O procedimento é programado como se fosse uma chamada local, abstraindo do código cliente os detalhes da comunicação com o servidor. Chamadas remotas geralmente são mais lentas e menos confiáveis do que chamadas locais; por isso, é útil distingui-las. Entre os frameworks RPC conhecidos estão [Protobuf](https://developers.google.com/protocol-buffers/), [Thrift](https://thrift.apache.org/) e [Avro](https://avro.apache.org/docs/current/).
+Em uma RPC, um cliente solicita a execução de um procedimento em outro espaço de endereçamento, normalmente em um servidor remoto. O procedimento é programado como se fosse uma chamada local, abstraindo do código cliente os detalhes da comunicação com o servidor. Chamadas remotas geralmente são mais lentas e menos confiáveis do que chamadas locais; por isso, é útil distingui-las. Entre os frameworks RPC conhecidos estão [Protobuf](https://developers.google.com/protocol-buffers/), [Thrift](https://thrift.apache.org/) e [Avro](https://avro.apache.org/docs/current/).
 
 RPC utiliza o modelo de requisição e resposta:
 
@@ -1539,7 +1539,7 @@ GET /someoperation?data=anId
 
 POST /anotheroperation
 {
-  "data":"anId";
+  "data": "anId",
   "anotherdata": "another value"
 }
 ```
@@ -1572,7 +1572,7 @@ Uma interface RESTful possui quatro características:
 * **Identificação dos recursos — URI no HTTP** — utilize a mesma URI independentemente da operação.
 * **Manipulação por representações — verbos no HTTP** — utilize verbos, cabeçalhos e corpo.
 * **Mensagens de erro autodescritivas — status da resposta HTTP** — utilize códigos de status em vez de criar mecanismos próprios.
-* **[HATEOAS](http://restcookbook.com/Basics/hateoas/) — interface HTML para HTTP** — o serviço web deve ser completamente acessível por um navegador.
+* **[HATEOAS](http://restcookbook.com/Basics/hateoas/) — hipermídia como motor do estado da aplicação** — as respostas incluem links que orientam o cliente sobre as ações e transições disponíveis.
 
 Exemplos de chamadas REST:
 
@@ -1583,13 +1583,13 @@ PUT /someresources/anId
 {"anotherdata": "another value"}
 ```
 
-REST concentra-se em expor dados. Ele reduz o acoplamento entre cliente e servidor e é utilizado com frequência em APIs HTTP públicas. REST adota uma forma mais genérica e uniforme de expor recursos por URIs, [representações por cabeçalhos](https://github.com/for-GET/know-your-http-well/blob/master/headers.md) e ações por verbos como GET, POST, PUT, DELETE e PATCH. Por ser stateless, REST é adequado à escalabilidade horizontal e ao particionamento.
+REST concentra-se em expor dados. Ele reduz o acoplamento entre cliente e servidor e é utilizado com frequência em APIs HTTP públicas. REST adota uma forma mais genérica e uniforme de expor recursos por URIs, representações negociadas por [cabeçalhos](https://github.com/for-GET/know-your-http-well/blob/master/headers.md) e corpos de mensagem, e ações por verbos como GET, POST, PUT, DELETE e PATCH. Por ser stateless, REST é adequado à escalabilidade horizontal e ao particionamento.
 
 #### Desvantagens de REST
 
 * Como REST se concentra em expor dados, pode não ser uma boa opção quando os recursos não são organizados naturalmente ou acessados por uma hierarquia simples. Por exemplo, não é fácil expressar como caminho a consulta de todos os registros atualizados na última hora que correspondam a determinado conjunto de eventos. Em REST, isso provavelmente seria implementado com uma combinação de caminho da URI, parâmetros de consulta e, possivelmente, corpo da requisição.
 * REST normalmente utiliza poucos verbos, como GET, POST, PUT, DELETE e PATCH, que nem sempre se ajustam ao caso de uso. Mover documentos expirados para uma pasta de arquivamento, por exemplo, pode não se encaixar de maneira clara nesses verbos.
-* A obtenção de recursos complexos com hierarquias aninhadas exige várias idas e voltas entre cliente e servidor para renderizar uma única visualização, como ao buscar uma publicação de blog e seus comentários. Em aplicações móveis sujeitas a condições variáveis de rede, essas várias viagens são especialmente indesejáveis.
+* A obtenção de recursos complexos com hierarquias aninhadas exige várias idas e voltas entre cliente e servidor para renderizar uma única visualização, como ao buscar uma publicação de blog e seus comentários. Em aplicações móveis sujeitas a condições variáveis de rede, essas várias idas e voltas são especialmente indesejáveis.
 * Com o tempo, novos campos podem ser adicionados à resposta de uma API. Clientes antigos passam a receber todos esses campos, inclusive os desnecessários, aumentando o tamanho do payload e a latência.
 
 <a id="comparacao-entre-chamadas-rpc-e-rest"></a>
@@ -1601,8 +1601,8 @@ REST concentra-se em expor dados. Ele reduz o acoplamento entre cliente e servid
 | Desligamento | **POST** /resign<br/>{<br/>"personid": "1234"<br/>} | **DELETE** /persons/1234 |
 | Consultar uma pessoa | **GET** /readPerson?personid=1234 | **GET** /persons/1234 |
 | Consultar a lista de itens de uma pessoa | **GET** /readUsersItemsList?personid=1234 | **GET** /persons/1234/items |
-| Adicionar um item à lista de uma pessoa | **POST** /addItemToUsersItemsList<br/>{<br/>"personid": "1234";<br/>"itemid": "456"<br/>} | **POST** /persons/1234/items<br/>{<br/>"itemid": "456"<br/>} |
-| Atualizar um item | **POST** /modifyItem<br/>{<br/>"itemid": "456";<br/>"key": "value"<br/>} | **PUT** /items/456<br/>{<br/>"key": "value"<br/>} |
+| Adicionar um item à lista de uma pessoa | **POST** /addItemToUsersItemsList<br/>{<br/>"personid": "1234",<br/>"itemid": "456"<br/>} | **POST** /persons/1234/items<br/>{<br/>"itemid": "456"<br/>} |
+| Atualizar um item | **POST** /modifyItem<br/>{<br/>"itemid": "456",<br/>"key": "value"<br/>} | **PUT** /items/456<br/>{<br/>"key": "value"<br/>} |
 | Excluir um item | **POST** /removeItem<br/>{<br/>"itemid": "456"<br/>} | **DELETE** /items/456 |
 
 <p align="center">
@@ -1628,7 +1628,7 @@ Esta seção precisa de algumas atualizações. Considere [contribuir](#como-con
 Segurança é um tema amplo. A menos que você tenha experiência considerável, formação em segurança ou esteja se candidatando a uma posição que exija conhecimentos de segurança, provavelmente não precisará conhecer mais do que os fundamentos:
 
 * Criptografe os dados em trânsito e em repouso.
-* Valide e sanitize todas as entradas de usuários, assim como qualquer parâmetro de entrada exposto a eles, para evitar [cross-site scripting — XSS](https://en.wikipedia.org/wiki/Cross-site_scripting) e [injeção de SQL](https://en.wikipedia.org/wiki/SQL_injection).
+* Valide e sanitize todos os dados fornecidos pelos usuários, assim como qualquer parâmetro que eles possam controlar, para evitar [cross-site scripting — XSS](https://en.wikipedia.org/wiki/Cross-site_scripting) e [injeção de SQL](https://en.wikipedia.org/wiki/SQL_injection).
 * Utilize consultas parametrizadas para evitar injeção de SQL.
 * Aplique o [princípio do menor privilégio](https://en.wikipedia.org/wiki/Principle_of_least_privilege).
 
@@ -1641,7 +1641,7 @@ Segurança é um tema amplo. A menos que você tenha experiência considerável,
 <a id="apendice"></a>
 ## Apêndice
 
-Em algumas entrevistas, você poderá ser solicitado a realizar estimativas de ordem de grandeza, também conhecidas como *back-of-the-envelope estimates*. Por exemplo, talvez seja necessário determinar quanto tempo levaria para gerar 100 miniaturas de imagens armazenadas em disco ou quanta memória uma estrutura de dados ocuparia. A **tabela de potências de dois** e os **números de latência que todo programador deve conhecer** são referências úteis para esses cálculos.
+Em algumas entrevistas, poderão pedir que você realize estimativas de ordem de grandeza, também conhecidas como *back-of-the-envelope estimates*. Por exemplo, talvez seja necessário determinar quanto tempo levaria para gerar 100 miniaturas de imagens armazenadas em disco ou quanta memória uma estrutura de dados ocuparia. A **tabela de potências de dois** e os **números de latência que todo programador deve conhecer** são referências úteis para esses cálculos.
 
 <a id="tabela-de-potencias-de-dois"></a>
 ### Tabela de potências de dois
@@ -1931,6 +1931,7 @@ A tradução do conteúdo principal foi concluída, mantendo a estrutura e o sig
 - [x] perguntas adicionais, arquiteturas e blogs de engenharia;
 - [x] seção em desenvolvimento, créditos, informações de contato e licença;
 - [x] revisão estrutural inicial, âncoras internas e comparação com o README original;
+- [x] primeira passagem técnica e linguística assistida;
 - [ ] revisão técnica e linguística por falantes nativos;
 - [ ] validação de links externos e renderização final.
 
