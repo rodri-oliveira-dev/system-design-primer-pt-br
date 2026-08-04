@@ -15,9 +15,10 @@ jobs:
   publish-report:
     if: >-
       github.event.pull_request.number == 1 &&
-      github.event.pull_request.head.ref == 'docs/pt-br-translation'
+      github.event.pull_request.head.ref == 'docs/pt-br-translation' &&
+      contains(github.event.pull_request.title, '[publicar auditoria final]')
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     steps:
       - name: Checkout da branch de tradução
@@ -40,19 +41,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-        run: |
-          python <<'PY'
-          import re
-          import textwrap
-          from pathlib import Path
-
-          workflow = Path('.audit-source/.github/workflows/audit-pt-br-links-render.yml').read_text(encoding='utf-8')
-          match = re.search(r"          python <<'PY'\n(.*?)\n          PY\n", workflow, flags=re.S)
-          if not match:
-              raise RuntimeError('Não foi possível extrair o script de auditoria')
-          code = textwrap.dedent(match.group(1))
-          exec(compile(code, 'audit_pt_br_links_render.py', 'exec'))
-          PY
+        run: python .audit-source/.github/scripts/audit_pt_br_links_render.py
 
       - name: Commitar relatório na branch de tradução
         if: always()
@@ -67,5 +56,5 @@ jobs:
             echo 'Relatório sem alterações.'
             exit 0
           fi
-          git commit -m 'chore(pt-BR): adiciona relatório temporário de links'
+          git commit -m 'chore(pt-BR): atualiza relatório temporário de links'
           git push origin HEAD:${{ github.event.pull_request.head.ref }}
