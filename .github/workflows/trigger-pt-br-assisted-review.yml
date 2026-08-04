@@ -1,0 +1,88 @@
+name: Acionar revisão assistida pt-BR
+
+on:
+  pull_request_target:
+    branches:
+      - master
+    types:
+      - synchronize
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  review:
+    if: >-
+      github.event.pull_request.number == 1 &&
+      github.event.pull_request.head.ref == 'docs/pt-br-translation' &&
+      contains(github.event.pull_request.title, '[revisao-assistida]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout da branch de tradução
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Obter executor da master
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          path: .review-source
+
+      - name: Configurar autor dos commits
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+      - name: Executar revisão linguística
+        run: |
+          python <<'PY'
+          import re
+          import textwrap
+          from pathlib import Path
+
+          source = Path('.review-source/.github/workflows/apply-pt-br-assisted-review.yml').read_text(encoding='utf-8')
+          blocks = re.findall(r"          python <<'PY'\n(.*?)\n          PY", source, flags=re.S)
+          if len(blocks) != 3:
+              raise RuntimeError(f'Esperados 3 blocos Python; encontrados {len(blocks)}')
+          exec(compile(textwrap.dedent(blocks[0]), 'review_language.py', 'exec'))
+          PY
+          git add README-pt-BR.md CONTRIBUTING-pt-BR.md
+          git commit -m 'docs(pt-BR): aprimora fluidez e consistência editorial'
+
+      - name: Executar revisão técnica
+        run: |
+          python <<'PY'
+          import re
+          import textwrap
+          from pathlib import Path
+
+          source = Path('.review-source/.github/workflows/apply-pt-br-assisted-review.yml').read_text(encoding='utf-8')
+          blocks = re.findall(r"          python <<'PY'\n(.*?)\n          PY", source, flags=re.S)
+          exec(compile(textwrap.dedent(blocks[1]), 'review_technical.py', 'exec'))
+          PY
+          git add README-pt-BR.md
+          git commit -m 'docs(pt-BR): corrige precisão técnica da tradução'
+
+      - name: Validar alterações
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          git diff --check HEAD~2..HEAD
+          python <<'PY'
+          import re
+          import textwrap
+          from pathlib import Path
+
+          source = Path('.review-source/.github/workflows/apply-pt-br-assisted-review.yml').read_text(encoding='utf-8')
+          blocks = re.findall(r"          python <<'PY'\n(.*?)\n          PY", source, flags=re.S)
+          exec(compile(textwrap.dedent(blocks[2]), 'review_validate.py', 'exec'))
+          PY
+
+      - name: Enviar commits para a branch
+        run: git push origin HEAD:${{ github.event.pull_request.head.ref }}
