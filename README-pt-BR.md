@@ -1915,7 +1915,7 @@ Minhas informações de contato estão disponíveis na minha [página do GitHub]
 
 ## Status da tradução
 
-A tradução do conteúdo principal foi concluída, mantendo a estrutura e o significado da versão original em inglês. O documento está agora em fase de revisão.
+A tradução do conteúdo principal, a revisão estrutural e a validação automatizada de links e renderização foram concluídas. O documento aguarda revisão técnica e linguística por falantes nativos.
 
 - [x] Índice e guia de estudos;
 - [x] abordagem para entrevistas de design de sistemas;
@@ -1933,6 +1933,6 @@ A tradução do conteúdo principal foi concluída, mantendo a estrutura e o sig
 - [x] revisão estrutural inicial, âncoras internas e comparação com o README original;
 - [x] primeira passagem técnica e linguística assistida;
 - [ ] revisão técnica e linguística por falantes nativos;
-- [ ] validação de links externos e renderização final.
+- [x] validação de links externos e renderização final.
 
 A discussão oficial da tradução para português brasileiro está registrada na [issue #40](https://github.com/donnemartin/system-design-primer/issues/40).
