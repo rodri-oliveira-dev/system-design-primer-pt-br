@@ -1,0 +1,85 @@
+name: Diagnosticar revisão assistida pt-BR
+
+on:
+  issue_comment:
+    types:
+      - created
+
+permissions:
+  contents: write
+  pull-requests: read
+  issues: read
+
+jobs:
+  diagnose:
+    if: >-
+      github.event.issue.number == 1 &&
+      github.event.issue.pull_request &&
+      github.event.comment.body == '/diagnose-pt-br-assisted-review'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout da branch de tradução
+        uses: actions/checkout@v4
+        with:
+          ref: docs/pt-br-translation
+          fetch-depth: 0
+
+      - name: Obter executor da master
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          path: .review-source
+
+      - name: Executar diagnóstico isolado
+        run: |
+          python <<'PY'
+          import os
+          import re
+          import shutil
+          import tempfile
+          import textwrap
+          import traceback
+          from pathlib import Path
+
+          root = Path.cwd()
+          source = (root / '.review-source/.github/workflows/apply-pt-br-assisted-review.yml').read_text(encoding='utf-8')
+          blocks = re.findall(r"          python <<'PY'\n(.*?)\n          PY", source, flags=re.S)
+          report = [f'Blocos encontrados: {len(blocks)}']
+
+          with tempfile.TemporaryDirectory() as temp_dir:
+              temp = Path(temp_dir)
+              for name in ['README-pt-BR.md', 'CONTRIBUTING-pt-BR.md', 'CONTRIBUTING.md']:
+                  shutil.copy2(root / name, temp / name)
+
+              previous = Path.cwd()
+              os.chdir(temp)
+              try:
+                  try:
+                      exec(compile(textwrap.dedent(blocks[0]), 'review_language.py', 'exec'))
+                      report.append('Revisão linguística: OK')
+                  except Exception:
+                      report.append('Revisão linguística: FALHA')
+                      report.append(traceback.format_exc())
+                  else:
+                      try:
+                          exec(compile(textwrap.dedent(blocks[1]), 'review_technical.py', 'exec'))
+                          report.append('Revisão técnica: OK')
+                      except Exception:
+                          report.append('Revisão técnica: FALHA')
+                          report.append(traceback.format_exc())
+              finally:
+                  os.chdir(previous)
+
+          (root / '.pt-br-assisted-review-diagnostic.txt').write_text('\n'.join(report) + '\n', encoding='utf-8')
+          print('\n'.join(report))
+          PY
+
+      - name: Publicar diagnóstico na branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .pt-br-assisted-review-diagnostic.txt
+          git commit -m 'chore: registra diagnóstico temporário da revisão pt-BR'
+          git push origin HEAD:docs/pt-br-translation
