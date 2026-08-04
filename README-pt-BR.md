@@ -1,6 +1,6 @@
 *[English](README.md) ∙ [日本語](README-ja.md) ∙ [简体中文](README-zh-Hans.md) ∙ [繁體中文](README-zh-TW.md) | [العَرَبِيَّة‎](https://github.com/donnemartin/system-design-primer/issues/170) ∙ [বাংলা](https://github.com/donnemartin/system-design-primer/issues/220) ∙ [Português do Brasil](README-pt-BR.md) ∙ [Deutsch](https://github.com/donnemartin/system-design-primer/issues/186) ∙ [ελληνικά](https://github.com/donnemartin/system-design-primer/issues/130) ∙ [עברית](https://github.com/donnemartin/system-design-primer/issues/272) ∙ [Italiano](https://github.com/donnemartin/system-design-primer/issues/104) ∙ [한국어](https://github.com/donnemartin/system-design-primer/issues/102) ∙ [فارسی](https://github.com/donnemartin/system-design-primer/issues/110) ∙ [Polski](https://github.com/donnemartin/system-design-primer/issues/68) ∙ [русский язык](https://github.com/donnemartin/system-design-primer/issues/87) ∙ [Español](https://github.com/donnemartin/system-design-primer/issues/136) ∙ [ภาษาไทย](https://github.com/donnemartin/system-design-primer/issues/187) ∙ [Türkçe](https://github.com/donnemartin/system-design-primer/issues/39) ∙ [tiếng Việt](https://github.com/donnemartin/system-design-primer/issues/127) ∙ [Français](https://github.com/donnemartin/system-design-primer/issues/250) | [Adicionar tradução](https://github.com/donnemartin/system-design-primer/issues/28)*
 
-**Ajude a [traduzir](https://github.com/donnemartin/system-design-primer/issues/40) este guia!**
+**Ajude a [revisar e manter](https://github.com/donnemartin/system-design-primer/issues/40) este guia!**
 
 > [!IMPORTANT]
 > A tradução principal para português brasileiro foi concluída e acompanha o [`README.md`](README.md) original em inglês. O conteúdo está em fase de revisão técnica e linguística, e contribuições são bem-vindas por meio de pull requests neste repositório.
@@ -168,6 +168,7 @@ Antes de contribuir com a tradução, consulte as [diretrizes de contribuição 
     * [Filas de tarefas](#filas-de-tarefas)
     * [Backpressure](#backpressure)
 * [Comunicação](#comunicacao)
+    * [Protocolo de Transferência de Hipertexto — HTTP](#protocolo-de-transferencia-de-hipertexto-http)
     * [Protocolo de Controle de Transmissão — TCP](#protocolo-de-controle-de-transmissao-tcp)
     * [Protocolo de Datagrama do Usuário — UDP](#protocolo-de-datagrama-do-usuario-udp)
     * [Chamada de procedimento remoto — RPC](#chamada-de-procedimento-remoto-rpc)
@@ -462,12 +463,12 @@ Em um sistema computacional distribuído, é possível oferecer apenas duas das 
 *Redes não são confiáveis; portanto, é necessário oferecer tolerância a partições. Isso exige um trade-off de software entre consistência e disponibilidade.*
 
 <a id="cp-consistencia-e-tolerancia-a-particoes"></a>
-#### CP - consistência e tolerância a partições
+#### CP — consistência e tolerância a partições
 
 Aguardar uma resposta do nó isolado pela partição pode resultar em um erro de timeout. CP é uma boa escolha quando as necessidades do negócio exigem leituras e escritas atômicas.
 
 <a id="ap-disponibilidade-e-tolerancia-a-particoes"></a>
-#### AP - disponibilidade e tolerância a partições
+#### AP — disponibilidade e tolerância a partições
 
 As respostas retornam a versão dos dados mais prontamente disponível em qualquer nó, que pode não ser a mais recente. As escritas podem levar algum tempo para se propagar depois que a partição é resolvida.
 
@@ -1669,7 +1670,7 @@ Potência        Valor exato          Valor aproximado     Bytes
 Comparação de números de latência
 ---------------------------------
 Referência ao cache L1                         0,5 ns
-Erro de predição de desvio                       5 ns
+Falha de predição de desvio                      5 ns
 Referência ao cache L2                           7 ns                      14x o cache L1
 Bloqueio/desbloqueio de mutex                   25 ns
 Referência à memória principal                 100 ns                      20x o cache L2, 200x o cache L1
@@ -1679,7 +1680,7 @@ Ler 4 KB aleatoriamente de SSD*             150.000 ns      150 us          ~1 G
 Ler 1 MB sequencialmente da memória         250.000 ns      250 us
 Ida e volta no mesmo data center            500.000 ns      500 us
 Ler 1 MB sequencialmente de SSD*          1.000.000 ns    1.000 us    1 ms  ~1 GB/s no SSD, 4x a memória
-Busca em HDD                              10.000.000 ns   10.000 us   10 ms  20x a ida e volta no data center
+Tempo de busca do HDD                    10.000.000 ns   10.000 us   10 ms  20x a ida e volta no data center
 Ler 1 MB sequencialmente por 1 Gbps      10.000.000 ns   10.000 us   10 ms  40x a memória, 10x o SSD
 Ler 1 MB sequencialmente de HDD           30.000.000 ns   30.000 us   30 ms 120x a memória, 30x o SSD
 Enviar pacote CA->Países Baixos->CA      150.000.000 ns  150.000 us  150 ms
@@ -1696,7 +1697,9 @@ Métricas úteis com base nos números anteriores:
 * leitura sequencial de HDD a 30 MB/s;
 * leitura sequencial por Ethernet de 1 Gbps a 100 MB/s;
 * leitura sequencial de SSD a 1 GB/s;
-* leitura sequencial da memória principal a 4 GB/s.
+* leitura sequencial da memória principal a 4 GB/s;
+* 6 a 7 viagens de ida e volta ao redor do mundo por segundo;
+* 2.000 viagens de ida e volta por segundo dentro de um data center.
 
 #### Números de latência visualizados
 
@@ -1872,7 +1875,7 @@ Tem interesse em adicionar uma seção ou ajudar a concluir uma que está em and
 
 * Computação distribuída com MapReduce;
 * hashing consistente;
-* scatter-gather;
+* scatter-gather — dispersão e agregação;
 * [contribua](#como-contribuir).
 
 <a id="creditos"></a>
@@ -1927,6 +1930,8 @@ A tradução do conteúdo principal foi concluída, mantendo a estrutura e o sig
 - [x] apêndice: tabela de potências de dois e números de latência;
 - [x] perguntas adicionais, arquiteturas e blogs de engenharia;
 - [x] seção em desenvolvimento, créditos, informações de contato e licença;
-- [ ] revisão técnica, linguística, de links e de âncoras.
+- [x] revisão estrutural inicial, âncoras internas e comparação com o README original;
+- [ ] revisão técnica e linguística por falantes nativos;
+- [ ] validação de links externos e renderização final.
 
 A discussão oficial da tradução para português brasileiro está registrada na [issue #40](https://github.com/donnemartin/system-design-primer/issues/40).

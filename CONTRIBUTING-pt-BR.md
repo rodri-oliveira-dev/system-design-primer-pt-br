@@ -2,7 +2,7 @@
 
 Obrigado pelo interesse em contribuir com a tradução do **System Design Primer** para português brasileiro.
 
-Este documento descreve o fluxo adotado enquanto a tradução está em andamento no repositório [`rodri-oliveira-dev/system-design-primer-pt-br`](https://github.com/rodri-oliveira-dev/system-design-primer-pt-br).
+Este documento descreve o fluxo adotado para revisar, manter e atualizar a tradução no repositório [`rodri-oliveira-dev/system-design-primer-pt-br`](https://github.com/rodri-oliveira-dev/system-design-primer-pt-br).
 
 Para as regras gerais do projeto original, consulte também o [`CONTRIBUTING.md`](CONTRIBUTING.md) em inglês.
 
@@ -21,7 +21,7 @@ Antes de iniciar uma contribuição:
 
 Você pode ajudar com:
 
-- tradução de seções ainda pendentes;
+- atualização de seções quando o `README.md` original for alterado;
 - revisão técnica de conceitos de arquitetura e sistemas distribuídos;
 - revisão linguística em português brasileiro;
 - correção de gramática, clareza e fluidez;
@@ -55,14 +55,14 @@ git fetch upstream
 
 ### 4. Use a branch de integração da tradução
 
-Enquanto a tradução não estiver concluída, as contribuições devem partir de `docs/pt-br-translation`:
+Durante a revisão e enquanto o PR de integração permanecer aberto, as contribuições devem partir de `docs/pt-br-translation`:
 
 ```bash
 git switch docs/pt-br-translation
 git pull upstream docs/pt-br-translation
 ```
 
-Não use `master` como base para uma seção da tradução em andamento.
+Não use `master` como base para revisões ou atualizações destinadas ao PR de integração.
 
 ### 5. Crie uma branch específica
 
@@ -104,14 +104,14 @@ git push -u origin docs/pt-br-dns-cdn
 
 ### 8. Abra o pull request
 
-Durante o desenvolvimento da tradução, abra o PR com:
+Durante a revisão e a manutenção da tradução, abra o PR com:
 
 ```text
 base: docs/pt-br-translation
 head: sua branch
 ```
 
-Não direcione o PR para `master` enquanto o `README-pt-BR.md` estiver incompleto.
+Não direcione o PR para `master` enquanto o PR de integração da tradução permanecer aberto.
 
 ## Regras de tradução
 
@@ -215,7 +215,7 @@ Use como referência as decisões já registradas no PR de integração. Entre e
 | company engineering blog | blog de engenharia de empresa |
 | distributed computing | computação distribuída |
 | consistent hashing | hashing consistente |
-| scatter-gather | scatter-gather; explicar o padrão na primeira ocorrência |
+| scatter-gather | scatter-gather — dispersão e agregação; preservar o termo original |
 | open source license | licença open source |
 | contact info | informações de contato |
 | cache-aside | cache-aside |
@@ -288,4 +288,4 @@ Os autores dos commits e pull requests continuarão registrados no histórico do
 
 A discussão oficial da tradução está na [issue #40 do projeto original](https://github.com/donnemartin/system-design-primer/issues/40).
 
-Quando o `README-pt-BR.md` estiver completo, atualizado e revisado, será preparado um pull request para o repositório original [`donnemartin/system-design-primer`](https://github.com/donnemartin/system-design-primer).
+Após a revisão técnica, linguística e estrutural do `README-pt-BR.md`, será preparado um pull request para o repositório original [`donnemartin/system-design-primer`](https://github.com/donnemartin/system-design-primer).

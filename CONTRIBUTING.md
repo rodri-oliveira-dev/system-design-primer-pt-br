@@ -1,7 +1,7 @@
 *[English](CONTRIBUTING.md) ∙ [Português do Brasil](CONTRIBUTING-pt-BR.md)*
 
 > [!IMPORTANT]
-> Para colaborar com a tradução para português brasileiro, consulte o [`CONTRIBUTING-pt-BR.md`](CONTRIBUTING-pt-BR.md). Durante o trabalho em andamento, os pull requests de tradução devem usar `docs/pt-br-translation` como branch base.
+> Para colaborar com a tradução para português brasileiro, consulte o [`CONTRIBUTING-pt-BR.md`](CONTRIBUTING-pt-BR.md). Durante a fase de revisão e integração, os pull requests da tradução devem usar `docs/pt-br-translation` como branch base.
 
 Contributing
 ============
