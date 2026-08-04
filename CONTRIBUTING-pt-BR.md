@@ -178,11 +178,11 @@ Use como referência as decisões já registradas no PR de integração. Entre e
 | wide column store | armazenamento em colunas largas |
 | graph database | banco de dados de grafos |
 | soft state | estado flexível — soft state |
-| Hypertext Transfer Protocol (HTTP) | Protocolo de Transferência de Hipertexto — HTTP |
-| Transmission Control Protocol (TCP) | Protocolo de Controle de Transmissão — TCP |
-| User Datagram Protocol (UDP) | Protocolo de Datagrama do Usuário — UDP |
-| Remote Procedure Call (RPC) | Chamada de Procedimento Remoto — RPC |
-| Representational State Transfer (REST) | Transferência de Estado Representacional — REST |
+| Hypertext Transfer Protocol (HTTP) | Protocolo de transferência de hipertexto — HTTP |
+| Transmission Control Protocol (TCP) | Protocolo de controle de transmissão — TCP |
+| User Datagram Protocol (UDP) | Protocolo de datagrama do usuário — UDP |
+| Remote Procedure Call (RPC) | Chamada de procedimento remoto — RPC |
+| Representational State Transfer (REST) | Transferência de estado representacional — REST |
 | stateless | stateless; explicar como “sem estado” quando necessário |
 | handshake | handshake |
 | acknowledgement | confirmação — acknowledgement |
@@ -227,6 +227,8 @@ Use como referência as decisões já registradas no PR de integração. Entre e
 | refresh-ahead | refresh-ahead |
 | message queue | fila de mensagens |
 | task queue | fila de tarefas |
+| job | tarefa — job; apresentar o termo original na primeira ocorrência |
+| worker | worker; apresentar “processo de trabalho” na primeira ocorrência |
 | back pressure | backpressure; apresentar “contrapressão” na definição |
 
 Caso um termo ainda não tenha uma tradução definida, registre a decisão no PR para que ela possa ser revisada e reutilizada nas demais seções.

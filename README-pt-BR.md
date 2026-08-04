@@ -20,7 +20,7 @@
 
 ### Aprenda a projetar sistemas de grande escala
 
-Aprender a projetar sistemas escaláveis ajudará você a se tornar um profissional de engenharia melhor.
+Aprender a projetar sistemas escaláveis ajudará você a aprimorar sua atuação como profissional de engenharia.
 
 Design de sistemas é um tema amplo. Existe uma **grande quantidade de recursos espalhados pela internet** sobre seus princípios.
 
@@ -59,7 +59,7 @@ Os [baralhos de flashcards do Anki](https://apps.ankiweb.net/) disponibilizados 
 * [Baralho de exercícios de design de sistemas](https://github.com/donnemartin/system-design-primer/tree/master/resources/flash_cards/System%20Design%20Exercises.apkg)
 * [Baralho de exercícios de design orientado a objetos](https://github.com/donnemartin/system-design-primer/tree/master/resources/flash_cards/OO%20Design.apkg)
 
-Ótimo para estudar durante deslocamentos ou quando estiver fora de casa.
+Esses baralhos são ótimos para estudar durante deslocamentos ou fora de casa.
 
 ### Recurso de programação: desafios interativos
 
@@ -121,7 +121,7 @@ Antes de contribuir com a tradução, consulte as [diretrizes de contribuição 
     * [Failover](#failover)
     * [Replicação](#replicação)
     * [Disponibilidade em números](#disponibilidade-em-números)
-* [Sistema de Nomes de Domínio](#sistema-de-nomes-de-dominio)
+* [Sistema de nomes de domínio](#sistema-de-nomes-de-dominio)
 * [Rede de distribuição de conteúdo](#rede-de-distribuicao-de-conteudo)
     * [CDNs push](#cdns-push)
     * [CDNs pull](#cdns-pull)
@@ -168,9 +168,9 @@ Antes de contribuir com a tradução, consulte as [diretrizes de contribuição 
     * [Filas de tarefas](#filas-de-tarefas)
     * [Backpressure](#backpressure)
 * [Comunicação](#comunicacao)
-    * [Protocolo de Transferência de Hipertexto — HTTP](#protocolo-de-transferencia-de-hipertexto-http)
-    * [Protocolo de Controle de Transmissão — TCP](#protocolo-de-controle-de-transmissao-tcp)
-    * [Protocolo de Datagrama do Usuário — UDP](#protocolo-de-datagrama-do-usuario-udp)
+    * [Protocolo de transferência de hipertexto — HTTP](#protocolo-de-transferencia-de-hipertexto-http)
+    * [Protocolo de controle de transmissão — TCP](#protocolo-de-controle-de-transmissao-tcp)
+    * [Protocolo de datagrama do usuário — UDP](#protocolo-de-datagrama-do-usuario-udp)
     * [Chamada de procedimento remoto — RPC](#chamada-de-procedimento-remoto-rpc)
     * [Transferência de estado representacional — REST](#transferencia-de-estado-representacional-rest)
 * [Segurança](#seguranca)
@@ -224,7 +224,7 @@ Comece de forma abrangente e aprofunde-se em algumas áreas. É útil conhecer u
 
 ## Como abordar uma pergunta de entrevista de design de sistemas
 
-> Como conduzir a discussão de uma pergunta de entrevista de design de sistemas.
+> Como conduzir a discussão durante uma entrevista de design de sistemas.
 
 A entrevista de design de sistemas é uma **conversa aberta**. Espera-se que você conduza a discussão.
 
@@ -489,7 +489,7 @@ Quando existem várias cópias dos mesmos dados, é necessário decidir como sin
 
 Depois de uma escrita, as leituras podem ou não refletir a alteração. O sistema adota uma abordagem de melhor esforço.
 
-Essa abordagem é encontrada em sistemas como o memcached. A consistência fraca funciona bem em casos de uso em tempo real, como VoIP, videochamadas e jogos multiplayer em tempo real. Por exemplo, ao perder o sinal por alguns segundos durante uma ligação, você não escuta o que foi falado durante a interrupção quando a conexão é restabelecida.
+Essa abordagem é encontrada em sistemas como o Memcached. A consistência fraca funciona bem em casos de uso em tempo real, como VoIP, videochamadas e jogos multiplayer em tempo real. Por exemplo, ao perder o sinal por alguns segundos durante uma ligação, você não escuta o que foi falado durante a interrupção quando a conexão é restabelecida.
 
 ### Consistência eventual
 
@@ -590,7 +590,7 @@ Disponibilidade (Total) = 1 - (1 - Disponibilidade (Foo)) * (1 - Disponibilidade
 Caso `Foo` e `Bar` tenham, cada um, 99,9% de disponibilidade, a disponibilidade total em paralelo será de 99,9999%.
 
 <a id="sistema-de-nomes-de-dominio"></a>
-## Sistema de Nomes de Domínio
+## Sistema de nomes de domínio
 
 <p align="center">
   <img src="images/IOyLj4i.jpg">
@@ -598,7 +598,7 @@ Caso `Foo` e `Bar` tenham, cada um, 99,9% de disponibilidade, a disponibilidade 
   <i><a href="http://www.slideshare.net/srikrupa5/dns-security-presentation-issa">Fonte: DNS security presentation</a></i>
 </p>
 
-Um Sistema de Nomes de Domínio (DNS) traduz um nome de domínio, como `www.example.com`, para um endereço IP.
+Um sistema de nomes de domínio (DNS) traduz um nome de domínio, como `www.example.com`, para um endereço IP.
 
 O DNS é hierárquico, com alguns servidores autoritativos no nível superior. O roteador ou o provedor de internet informa quais servidores DNS devem ser consultados durante a resolução. Servidores DNS de níveis inferiores armazenam mapeamentos em cache, que podem ficar desatualizados devido a atrasos na propagação do DNS. Os resultados também podem ser armazenados em cache pelo navegador ou sistema operacional durante um período determinado pelo [tempo de vida — time to live (TTL)](https://en.wikipedia.org/wiki/Time_to_live).
 
@@ -607,7 +607,7 @@ O DNS é hierárquico, com alguns servidores autoritativos no nível superior. O
 * **Registro A — address** — aponta um nome para um endereço IP.
 * **CNAME — canonical name** — aponta um nome para outro nome, que pode apontar para outro `CNAME` ou para um registro `A`, como ao associar `example.com` a `www.example.com`.
 
-Serviços como [CloudFlare](https://www.cloudflare.com/dns/) e [Route 53](https://aws.amazon.com/route53/) oferecem DNS gerenciado. Alguns serviços DNS podem rotear o tráfego por diferentes métodos:
+Serviços como [Cloudflare](https://www.cloudflare.com/dns/) e [Route 53](https://aws.amazon.com/route53/) oferecem DNS gerenciado. Alguns serviços DNS podem rotear o tráfego por diferentes métodos:
 
 * [Round robin ponderado](https://www.jscape.com/blog/load-balancing-algorithms):
     * impedir que o tráfego seja enviado para servidores em manutenção;
@@ -802,19 +802,19 @@ Outros benefícios incluem:
 
 Separar a camada web da camada de aplicação, também conhecida como camada de plataforma, permite escalar e configurar as duas de forma independente. A inclusão de uma nova API pode exigir novos servidores de aplicação sem necessariamente demandar servidores web adicionais. O **princípio da responsabilidade única** defende serviços pequenos e autônomos que trabalham em conjunto. Equipes pequenas responsáveis por serviços pequenos podem planejar de forma mais agressiva para um crescimento rápido.
 
-Workers na camada de aplicação também ajudam a viabilizar o [assincronismo](#assincronismo).
+Workers (processos de trabalho) na camada de aplicação também ajudam a viabilizar o [assincronismo](#assincronismo).
 
 <a id="microsservicos"></a>
 ### Microsserviços
 
 Relacionados a essa discussão estão os [microsserviços](https://en.wikipedia.org/wiki/Microservices), que podem ser descritos como um conjunto de serviços pequenos, modulares e implantáveis de forma independente. Cada serviço executa um processo próprio e se comunica por um mecanismo leve e bem definido para atender a um objetivo de negócio.<sup><a href="https://smartbear.com/learn/api-design/microservices/?lang=en-us">1</a></sup>
 
-O Pinterest, por exemplo, poderia possuir microsserviços para perfil de usuário, seguidores, feed, pesquisa, upload de fotos e outras funções.
+O Pinterest, por exemplo, poderia ter microsserviços para perfil de usuário, seguidores, feed, pesquisa, upload de fotos e outras funções.
 
 <a id="descoberta-de-servicos"></a>
 ### Descoberta de serviços
 
-Sistemas como [Consul](https://www.consul.io/docs/index.html), [Etcd](https://coreos.com/etcd/docs/latest) e [Zookeeper](http://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper) podem ajudar os serviços a se encontrar, mantendo registros de nomes, endereços e portas. [Verificações de integridade — health checks](https://www.consul.io/intro/getting-started/checks.html) ajudam a verificar a integridade dos serviços e frequentemente utilizam um endpoint [HTTP](#protocolo-de-transferencia-de-hipertexto-http). Consul e Etcd também possuem um [armazenamento chave-valor](#armazenamento-chave-valor) integrado, útil para guardar valores de configuração e outros dados compartilhados.
+Sistemas como [Consul](https://www.consul.io/docs/index.html), [etcd](https://coreos.com/etcd/docs/latest) e [ZooKeeper](http://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper) podem ajudar os serviços a se encontrar, mantendo registros de nomes, endereços e portas. [Verificações de integridade — health checks](https://www.consul.io/intro/getting-started/checks.html) ajudam a verificar a integridade dos serviços e frequentemente utilizam um endpoint [HTTP](#protocolo-de-transferencia-de-hipertexto-http). Consul e etcd também possuem um [armazenamento chave-valor](#armazenamento-chave-valor) integrado, útil para guardar valores de configuração e outros dados compartilhados.
 
 ### Desvantagens da camada de aplicação
 
@@ -1389,10 +1389,10 @@ Fluxos assíncronos ajudam a reduzir o tempo das requisições em operações cu
 
 Filas de mensagens recebem, mantêm e entregam mensagens. Quando uma operação é lenta demais para ser executada no fluxo da requisição, pode-se utilizar uma fila com o seguinte processo:
 
-* uma aplicação publica um job na fila e informa ao usuário o status do processamento;
-* um worker retira o job da fila, processa-o e sinaliza sua conclusão.
+* uma aplicação publica uma tarefa (*job*) na fila e informa ao usuário o status do processamento;
+* um *worker* retira a tarefa da fila, processa-a e sinaliza sua conclusão.
 
-O usuário não fica bloqueado e o job é processado em segundo plano. Durante esse período, o cliente pode executar uma pequena quantidade de processamento para transmitir a impressão de que a tarefa já foi concluída. Ao publicar um tweet, por exemplo, ele pode aparecer imediatamente na timeline do usuário, embora sua entrega efetiva a todos os seguidores ainda leve algum tempo.
+O usuário não fica bloqueado, e a tarefa é processada em segundo plano. Durante esse período, o cliente pode executar uma pequena quantidade de processamento para transmitir a impressão de que a tarefa já foi concluída. Ao publicar um tweet, por exemplo, ele pode aparecer imediatamente na timeline do usuário, embora sua entrega efetiva a todos os seguidores ainda leve algum tempo.
 
 O **[Redis](https://redis.io/)** é útil como um message broker simples, mas mensagens podem ser perdidas.
 
@@ -1410,7 +1410,7 @@ O **[Celery](https://docs.celeryproject.org/en/stable/)** oferece suporte a agen
 <a id="backpressure"></a>
 ### Backpressure
 
-Quando as filas crescem de maneira significativa, seu tamanho pode ultrapassar a capacidade da memória, provocando *cache misses*, leituras em disco e desempenho ainda menor. O [backpressure](http://mechanical-sympathy.blogspot.com/2012/05/apply-back-pressure-when-overloaded.html), ou contrapressão, ajuda a limitar o tamanho da fila, preservando throughput elevado e bons tempos de resposta para os jobs que já estão aguardando processamento. Quando a fila atinge seu limite, os clientes recebem uma indicação de servidor ocupado ou o status HTTP 503 e devem tentar novamente mais tarde. As novas tentativas podem utilizar [backoff exponencial](https://en.wikipedia.org/wiki/Exponential_backoff).
+Quando as filas crescem de maneira significativa, seu tamanho pode ultrapassar a capacidade da memória, provocando *cache misses*, leituras em disco e desempenho ainda menor. O [backpressure](http://mechanical-sympathy.blogspot.com/2012/05/apply-back-pressure-when-overloaded.html), ou contrapressão, ajuda a limitar o tamanho da fila, preservando throughput elevado e bons tempos de resposta para as tarefas que já estão aguardando processamento. Quando a fila atinge seu limite, os clientes recebem uma indicação de servidor ocupado ou o status HTTP 503 e devem tentar novamente mais tarde. As novas tentativas podem utilizar [backoff exponencial](https://en.wikipedia.org/wiki/Exponential_backoff).
 
 ### Desvantagens do assincronismo
 
@@ -1433,7 +1433,7 @@ Quando as filas crescem de maneira significativa, seu tamanho pode ultrapassar a
 </p>
 
 <a id="protocolo-de-transferencia-de-hipertexto-http"></a>
-### Protocolo de Transferência de Hipertexto — HTTP
+### Protocolo de transferência de hipertexto — HTTP
 
 HTTP é um método para codificar e transportar dados entre um cliente e um servidor. É um protocolo de requisição e resposta: clientes enviam requisições, e servidores devolvem respostas com o conteúdo relevante e informações sobre o status de processamento. O HTTP é autocontido, permitindo que requisições e respostas atravessem diversos roteadores e servidores intermediários responsáveis por balanceamento de carga, cache, criptografia e compressão.
 
@@ -1458,7 +1458,7 @@ HTTP é um protocolo da camada de aplicação que depende de protocolos de níve
 * [Difference between PUT and PATCH](https://laracasts.com/discuss/channels/general-discussion/whats-the-differences-between-put-and-patch?page=1)
 
 <a id="protocolo-de-controle-de-transmissao-tcp"></a>
-### Protocolo de Controle de Transmissão — TCP
+### Protocolo de controle de transmissão — TCP
 
 <p align="center">
   <img src="images/JdAsdvG.jpg">
@@ -1483,7 +1483,7 @@ Prefira TCP a UDP quando:
 * você quiser que o protocolo ajuste automaticamente o uso do throughput disponível na rede.
 
 <a id="protocolo-de-datagrama-do-usuario-udp"></a>
-### Protocolo de Datagrama do Usuário — UDP
+### Protocolo de datagrama do usuário — UDP
 
 <p align="center">
   <img src="images/yzDrJtA.jpg">
@@ -1513,7 +1513,7 @@ Prefira UDP a TCP quando:
 * [Scaling memcache at Facebook](http://www.cs.bu.edu/~jappavoo/jappavoo.github.com/451/papers/memcache-fb.pdf)
 
 <a id="chamada-de-procedimento-remoto-rpc"></a>
-### Chamada de Procedimento Remoto — RPC
+### Chamada de procedimento remoto — RPC
 
 <p align="center">
   <img src="images/iF4Mkb5.png">
@@ -1563,7 +1563,7 @@ APIs HTTP que seguem **REST** são utilizadas com mais frequência como APIs pú
 * Nem sempre é possível aproveitar tecnologias existentes sem adaptações. Por exemplo, pode ser necessário trabalho adicional para garantir que [chamadas RPC sejam armazenadas corretamente em cache](https://web.archive.org/web/20170608193645/http://etherealbits.com/2012/12/debunking-the-myths-of-rpc-rest/) por servidores como o [Squid](http://www.squid-cache.org/).
 
 <a id="transferencia-de-estado-representacional-rest"></a>
-### Transferência de Estado Representacional — REST
+### Transferência de estado representacional — REST
 
 REST é um estilo arquitetural que estabelece um modelo cliente-servidor no qual o cliente atua sobre um conjunto de recursos administrados pelo servidor. O servidor fornece representações dos recursos e ações que permitem manipulá-los ou obter novas representações. Toda comunicação deve ser stateless e armazenável em cache.
 
@@ -1829,7 +1829,7 @@ Métricas úteis com base nos números anteriores:
 * [Cloudera Developer Blog](http://blog.cloudera.com/)
 * [Dropbox Tech Blog](https://tech.dropbox.com/)
 * [Engineering at Quora](https://www.quora.com/q/quoraengineering)
-* [Ebay Tech Blog](http://www.ebaytechblog.com/)
+* [eBay Tech Blog](http://www.ebaytechblog.com/)
 * [Evernote Tech Blog](https://blog.evernote.com/tech/)
 * [Etsy Code as Craft](http://codeascraft.com/)
 * [Facebook Engineering](https://www.facebook.com/Engineering)
@@ -1839,7 +1839,7 @@ Métricas úteis com base nos números anteriores:
 * [Google Research Blog](http://googleresearch.blogspot.com/)
 * [Groupon Engineering Blog](https://engineering.groupon.com/)
 * [Heroku Engineering Blog](https://engineering.heroku.com/)
-* [Hubspot Engineering Blog](http://product.hubspot.com/blog/topic/engineering)
+* [HubSpot Engineering Blog](http://product.hubspot.com/blog/topic/engineering)
 * [High Scalability](http://highscalability.com/)
 * [Instagram Engineering](http://instagram-engineering.tumblr.com/)
 * [Intel Software Blog](https://software.intel.com/en-us/blogs/)
@@ -1848,7 +1848,7 @@ Métricas úteis com base nos números anteriores:
 * [Microsoft Engineering](https://engineering.microsoft.com/)
 * [Microsoft Python Engineering](https://blogs.msdn.microsoft.com/pythonengineering/)
 * [Netflix Tech Blog](http://techblog.netflix.com/)
-* [Paypal Developer Blog](https://developer.paypal.com/community/blog/)
+* [PayPal Developer Blog](https://developer.paypal.com/community/blog/)
 * [Pinterest Engineering Blog](https://medium.com/@Pinterest_Engineering)
 * [Reddit Blog](http://www.redditblog.com/)
 * [Salesforce Engineering Blog](https://engineering.salesforce.com/)
