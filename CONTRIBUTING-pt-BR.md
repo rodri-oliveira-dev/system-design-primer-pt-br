@@ -199,6 +199,12 @@ Use como referência as decisões já registradas no PR de integração. Entre e
 | power of two | potência de dois |
 | latency number | número de latência |
 | nanosecond / microsecond / millisecond | nanossegundo / microssegundo / milissegundo; preservar as unidades ns, us e ms em tabelas |
+| system design interview question | pergunta de entrevista de design de sistemas |
+| object-oriented design (OOD) | design orientado a objetos — OOD |
+| web crawler | rastreador web |
+| hash map | mapa de hash |
+| least recently used cache (LRU) | cache LRU — Least Recently Used |
+| call center | central de atendimento |
 | cache-aside | cache-aside |
 | write-through | write-through |
 | write-behind / write-back | write-behind / write-back |
