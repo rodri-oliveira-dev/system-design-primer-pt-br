@@ -1,0 +1,92 @@
+name: Aplicar polimento final assistido pt-BR
+
+on:
+  issue_comment:
+    types:
+      - created
+
+permissions:
+  contents: write
+  pull-requests: read
+  issues: read
+
+jobs:
+  polish:
+    if: >-
+      github.event.issue.number == 1 &&
+      github.event.issue.pull_request &&
+      github.event.comment.body == '/run-pt-br-final-polish'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout da branch de tradução
+        uses: actions/checkout@v4
+        with:
+          ref: docs/pt-br-translation
+          fetch-depth: 0
+
+      - name: Aplicar correções pontuais
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          path = Path('README-pt-BR.md')
+          text = path.read_text(encoding='utf-8')
+          replacements = [
+              ('[Introduction to Zookeeper](http://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper)',
+               '[Introduction to ZooKeeper](http://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper)'),
+              ('Elas podem oferecer agendamento e executar em segundo plano jobs que exigem grande capacidade computacional.',
+               'Elas podem oferecer agendamento e executar em segundo plano tarefas que exigem grande capacidade computacional.'),
+              ('RPC utiliza o modelo de requisição e resposta:',
+               'A RPC utiliza o modelo de requisição e resposta:'),
+              ('* Use `INT` para valores inteiros; no MySQL, o intervalo depende de a coluna ser assinada (`SIGNED`) ou não assinada (`UNSIGNED`).',
+               '* Use `INT` para valores inteiros; no MySQL, o intervalo depende de a coluna estar definida como assinada (`SIGNED`) ou não assinada (`UNSIGNED`).'),
+          ]
+          for old, new in replacements:
+              found = text.count(old)
+              if found != 1:
+                  raise RuntimeError(f'Esperada 1 ocorrência, encontrada {found}: {old!r}')
+              text = text.replace(old, new)
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Validar Markdown e renderização
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          git diff --check
+          python <<'PY'
+          import json
+          import os
+          import urllib.request
+          from pathlib import Path
+
+          text = Path('README-pt-BR.md').read_text(encoding='utf-8')
+          if text.count('```') % 2:
+              raise RuntimeError('Quantidade ímpar de delimitadores de código')
+          request = urllib.request.Request(
+              'https://api.github.com/markdown',
+              data=json.dumps({'text': text, 'mode': 'gfm', 'context': os.environ['GITHUB_REPOSITORY']}).encode('utf-8'),
+              headers={
+                  'Accept': 'application/vnd.github+json',
+                  'Authorization': f"Bearer {os.environ['GITHUB_TOKEN']}",
+                  'Content-Type': 'application/json',
+                  'User-Agent': 'system-design-primer-pt-br-final-polish',
+                  'X-GitHub-Api-Version': '2022-11-28',
+              },
+              method='POST',
+          )
+          with urllib.request.urlopen(request, timeout=45) as response:
+              if response.status != 200:
+                  raise RuntimeError(f'Falha na renderização GFM: HTTP {response.status}')
+          PY
+
+      - name: Commitar e enviar
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add README-pt-BR.md
+          git commit -m 'docs(pt-BR): aplica polimento final da revisão assistida'
+          git push origin HEAD:docs/pt-br-translation
