@@ -43,6 +43,10 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: python .audit-source/.github/scripts/audit_pt_br_links_render.py
 
+      - name: Validar âncoras na fonte Markdown
+        if: always()
+        run: python .audit-source/.github/scripts/validate_pt_br_source_anchors.py
+
       - name: Commitar relatório na branch de tradução
         if: always()
         run: |
