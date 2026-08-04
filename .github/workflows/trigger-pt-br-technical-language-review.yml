@@ -1,0 +1,60 @@
+name: Aplicar revisão técnica e linguística pt-BR
+
+on:
+  pull_request_target:
+    branches:
+      - master
+    types:
+      - edited
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  apply-review:
+    if: >-
+      github.event.pull_request.number == 1 &&
+      github.event.pull_request.head.ref == 'docs/pt-br-translation'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout da branch de tradução
+        uses: actions/checkout@v4
+        with:
+          ref: docs/pt-br-translation
+          fetch-depth: 0
+
+      - name: Executar revisão técnica e linguística
+        shell: bash
+        run: |
+          git fetch origin master
+          git show origin/master:.github/scripts/apply_pt_br_technical_language_review.py > /tmp/apply_pt_br_technical_language_review.py
+          python /tmp/apply_pt_br_technical_language_review.py
+
+      - name: Validar correções
+        shell: bash
+        run: |
+          grep -q 'Quantos usuários o sistema terá?' README-pt-BR.md
+          grep -q 'políticas de \[substituição de cache\]' README-pt-BR.md
+          grep -q 'hipermídia como motor do estado da aplicação' README-pt-BR.md
+          grep -q '"data": "anId",' README-pt-BR.md
+          grep -q 'primeira passagem técnica e linguística assistida' README-pt-BR.md
+          grep -q 'cache replacement policy' CONTRIBUTING-pt-BR.md
+          grep -q 'health check' CONTRIBUTING-pt-BR.md
+          ! grep -q '"data":"anId";' README-pt-BR.md
+          ! grep -q 'interface HTML para HTTP' README-pt-BR.md
+          ! grep -q 'servidores não saudáveis' README-pt-BR.md
+
+      - name: Commitar revisão
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README-pt-BR.md CONTRIBUTING-pt-BR.md
+          if git diff --cached --quiet; then
+            echo "Nenhuma alteração pendente"
+            exit 0
+          fi
+          git commit -m "docs(pt-BR): revisa precisão técnica e fluidez"
+          git push origin HEAD:docs/pt-br-translation
