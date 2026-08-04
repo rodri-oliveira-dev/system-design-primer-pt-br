@@ -605,7 +605,7 @@ O DNS é hierárquico, com alguns servidores autoritativos no nível superior. O
 * **Registro NS — name server** — especifica os servidores DNS do domínio ou subdomínio.
 * **Registro MX — mail exchange** — especifica os servidores de e-mail que recebem mensagens.
 * **Registro A — address** — aponta um nome para um endereço IP.
-* **CNAME — canonical name** — aponta um nome para outro nome, que pode apontar para outro `CNAME` ou para um registro `A`, como no redirecionamento de `example.com` para `www.example.com`.
+* **CNAME — canonical name** — aponta um nome para outro nome, que pode apontar para outro `CNAME` ou para um registro `A`, como ao associar `example.com` a `www.example.com`.
 
 Serviços como [CloudFlare](https://www.cloudflare.com/dns/) e [Route 53](https://aws.amazon.com/route53/) oferecem DNS gerenciado. Alguns serviços DNS podem rotear o tráfego por diferentes métodos:
 
