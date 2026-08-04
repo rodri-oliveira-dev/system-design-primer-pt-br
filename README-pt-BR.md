@@ -3,7 +3,7 @@
 **Ajude a [traduzir](https://github.com/donnemartin/system-design-primer/issues/40) este guia!**
 
 > [!IMPORTANT]
-> Esta tradução para português brasileiro está em andamento e acompanha o [`README.md`](README.md) original em inglês. Contribuições e revisões técnicas são bem-vindas por meio de pull requests neste repositório.
+> A tradução principal para português brasileiro foi concluída e acompanha o [`README.md`](README.md) original em inglês. O conteúdo está em fase de revisão técnica e linguística, e contribuições são bem-vindas por meio de pull requests neste repositório.
 
 # Guia de Design de Sistemas
 
@@ -85,7 +85,7 @@ Sinta-se à vontade para enviar pull requests para ajudar a:
 * Adicionar novas seções;
 * [Traduzir](https://github.com/donnemartin/system-design-primer/issues/40).
 
-O conteúdo que ainda precisa de melhorias está indicado como [em desenvolvimento](README.md#under-development) na versão original.
+O conteúdo que ainda precisa de melhorias está indicado na seção [Em desenvolvimento](#em-desenvolvimento).
 
 Antes de contribuir com a tradução, consulte as [diretrizes de contribuição em português brasileiro](CONTRIBUTING-pt-BR.md). Para as regras gerais do projeto original, consulte o [`CONTRIBUTING.md`](CONTRIBUTING.md) em inglês.
 
@@ -101,7 +101,7 @@ Antes de contribuir com a tradução, consulte as [diretrizes de contribuição 
 </p>
 
 > [!NOTE]
-> As seções já traduzidas apontam para este documento. As demais continuam apontando temporariamente para o `README.md` original em inglês.
+> A tradução principal está concluída. Todos os itens do índice abaixo apontam para seções deste documento.
 
 * [Tópicos de design de sistemas: comece aqui](#tópicos-de-design-de-sistemas-comece-aqui)
     * [Etapa 1: assista à aula em vídeo sobre escalabilidade](#etapa-1-assista-à-aula-em-vídeo-sobre-escalabilidade)
@@ -180,10 +180,10 @@ Antes de contribuir com a tradução, consulte as [diretrizes de contribuição 
     * [Arquiteturas do mundo real](#arquiteturas-do-mundo-real)
     * [Arquiteturas de empresas](#arquiteturas-de-empresas)
     * [Blogs de engenharia de empresas](#blogs-de-engenharia-de-empresas)
-* [Em desenvolvimento](README.md#under-development)
-* [Créditos](README.md#credits)
-* [Informações de contato](README.md#contact-info)
-* [Licença](README.md#license)
+* [Em desenvolvimento](#em-desenvolvimento)
+* [Créditos](#creditos)
+* [Informações de contato](#informacoes-de-contato)
+* [Licença](#licenca)
 
 ## Guia de estudos
 
@@ -1865,9 +1865,54 @@ Deseja adicionar um blog? Para evitar duplicação de trabalho, considere adicio
 
 * [kilimchoi/engineering-blogs](https://github.com/kilimchoi/engineering-blogs)
 
+<a id="em-desenvolvimento"></a>
+## Em desenvolvimento
+
+Tem interesse em adicionar uma seção ou ajudar a concluir uma que está em andamento? [Contribua](#como-contribuir)!
+
+* Computação distribuída com MapReduce;
+* hashing consistente;
+* scatter-gather;
+* [contribua](#como-contribuir).
+
+<a id="creditos"></a>
+## Créditos
+
+Os créditos e as fontes são apresentados ao longo deste repositório.
+
+Agradecimentos especiais a:
+
+* [Hired in tech](http://www.hiredintech.com/system-design/the-system-design-process/)
+* [Cracking the coding interview](https://www.amazon.com/dp/0984782850/)
+* [High scalability](http://highscalability.com/)
+* [checkcheckzz/system-design-interview](https://github.com/checkcheckzz/system-design-interview)
+* [shashank88/system_design](https://github.com/shashank88/system_design)
+* [mmcgrana/services-engineering](https://github.com/mmcgrana/services-engineering)
+* [System design cheat sheet](https://gist.github.com/vasanthk/485d1c25737e8e72759f)
+* [A distributed systems reading list](http://dancres.github.io/Pages/)
+* [Cracking the system design interview](http://www.puncsky.com/blog/2016-02-13-crack-the-system-design-interview)
+
+<a id="informacoes-de-contato"></a>
+## Informações de contato
+
+Sinta-se à vontade para entrar em contato comigo para discutir problemas, dúvidas ou comentários.
+
+Minhas informações de contato estão disponíveis na minha [página do GitHub](https://github.com/donnemartin).
+
+<a id="licenca"></a>
+## Licença
+
+*Disponibilizo a você o código e os recursos deste repositório sob uma licença open source. Como este é meu repositório pessoal, a licença sobre meu código e meus recursos é concedida por mim, e não pelo meu empregador (Facebook).*
+
+    Copyright 2017 Donne Martin
+
+    Licença Creative Commons Atribuição 4.0 Internacional (CC BY 4.0)
+
+    http://creativecommons.org/licenses/by/4.0/
+
 ## Status da tradução
 
-A tradução está sendo desenvolvida incrementalmente, mantendo a estrutura e o significado da versão original em inglês.
+A tradução do conteúdo principal foi concluída, mantendo a estrutura e o significado da versão original em inglês. O documento está agora em fase de revisão.
 
 - [x] Índice e guia de estudos;
 - [x] abordagem para entrevistas de design de sistemas;
@@ -1881,7 +1926,7 @@ A tradução está sendo desenvolvida incrementalmente, mantendo a estrutura e o
 - [x] segurança;
 - [x] apêndice: tabela de potências de dois e números de latência;
 - [x] perguntas adicionais, arquiteturas e blogs de engenharia;
-- [ ] créditos, informações de contato e licença;
+- [x] seção em desenvolvimento, créditos, informações de contato e licença;
 - [ ] revisão técnica, linguística, de links e de âncoras.
 
 A discussão oficial da tradução para português brasileiro está registrada na [issue #40](https://github.com/donnemartin/system-design-primer/issues/40).

@@ -213,6 +213,11 @@ Use como referência as decisões já registradas no PR de integração. Entre e
 | data store | armazenamento de dados |
 | file system | sistema de arquivos |
 | company engineering blog | blog de engenharia de empresa |
+| distributed computing | computação distribuída |
+| consistent hashing | hashing consistente |
+| scatter-gather | scatter-gather; explicar o padrão na primeira ocorrência |
+| open source license | licença open source |
+| contact info | informações de contato |
 | cache-aside | cache-aside |
 | write-through | write-through |
 | write-behind / write-back | write-behind / write-back |
