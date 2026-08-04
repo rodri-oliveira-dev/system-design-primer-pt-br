@@ -1,0 +1,46 @@
+name: Aplicar revisão estrutural pt-BR
+
+on:
+  pull_request_target:
+    branches:
+      - master
+    types:
+      - edited
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  apply-review:
+    if: >-
+      github.event.pull_request.number == 1 &&
+      github.event.pull_request.head.ref == 'docs/pt-br-translation'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout da branch de tradução
+        uses: actions/checkout@v4
+        with:
+          ref: docs/pt-br-translation
+          fetch-depth: 0
+
+      - name: Executar revisão estrutural
+        shell: bash
+        run: |
+          git fetch origin master
+          git show origin/master:.github/scripts/apply_pt_br_final_review.py > /tmp/apply_pt_br_final_review.py
+          python /tmp/apply_pt_br_final_review.py
+
+      - name: Commitar correções
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README-pt-BR.md CONTRIBUTING-pt-BR.md CONTRIBUTING.md
+          if git diff --cached --quiet; then
+            echo "Nenhuma alteração pendente"
+            exit 0
+          fi
+          git commit -m "docs(pt-BR): realiza revisão estrutural inicial"
+          git push origin HEAD:docs/pt-br-translation
