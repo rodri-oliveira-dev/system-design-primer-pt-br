@@ -841,7 +841,7 @@ Sistemas como [Consul](https://www.consul.io/docs/index.html), [etcd](https://co
 <a id="sistema-gerenciador-de-banco-de-dados-relacional-sgbdr"></a>
 ### Sistema gerenciador de banco de dados relacional — SGBDR
 
-Um banco de dados relacional, como um banco SQL, é uma coleção de itens de dados organizados em tabelas.
+Um banco de dados relacional organiza dados em tabelas relacionadas e normalmente utiliza SQL para definir, consultar e manipular essas informações.
 
 **ACID** é um conjunto de propriedades das [transações](https://en.wikipedia.org/wiki/Database_transaction) de bancos de dados relacionais.
 
@@ -985,13 +985,13 @@ Os resultados de benchmarks e profiling podem indicar as otimizações a seguir.
 ##### Otimize o esquema
 
 * O MySQL grava dados em disco em blocos contíguos para permitir acesso rápido.
-* Use `CHAR` em vez de `VARCHAR` para campos de tamanho fixo.
-    * `CHAR` permite acesso aleatório mais rápido; com `VARCHAR`, é necessário encontrar o final de uma string antes de avançar para a próxima.
-* Use `TEXT` para grandes blocos de texto, como publicações de blog. `TEXT` também permite pesquisas booleanas. Um campo `TEXT` armazena em disco um ponteiro utilizado para localizar o bloco de texto.
-* Use `INT` para números maiores, até `2^32`, aproximadamente 4 bilhões.
+* Considere `CHAR` para campos realmente fixos e `VARCHAR` para comprimentos variáveis.
+    * O impacto de desempenho e armazenamento depende do SGBDR, do conjunto de caracteres e do padrão de acesso.
+* Considere `TEXT` para grandes blocos de texto, como publicações de blog. Os recursos de busca textual dependem do SGBDR e dos índices configurados. O armazenamento físico de campos `TEXT` também varia conforme o mecanismo utilizado.
+* Use `INT` para valores inteiros; no MySQL, o intervalo depende de a coluna ser assinada (`SIGNED`) ou não assinada (`UNSIGNED`).
 * Use `DECIMAL` para valores monetários, evitando erros de representação de ponto flutuante.
 * Evite armazenar `BLOBs` grandes; prefira armazenar a localização do objeto.
-* `VARCHAR(255)` utiliza o maior número de caracteres que pode ser representado por um número de 8 bits, frequentemente aproveitando melhor um byte em alguns SGBDRs.
+* `VARCHAR(255)` é comum por razões históricas e de compatibilidade, mas o tamanho deve ser definido conforme o domínio dos dados e o conjunto de caracteres, não como padrão universal.
 * Defina a restrição `NOT NULL` quando aplicável para [melhorar o desempenho das buscas](http://stackoverflow.com/questions/1017239/how-do-null-values-affect-performance-in-a-database-search).
 
 ##### Use índices adequados
@@ -1010,9 +1010,9 @@ Os resultados de benchmarks e profiling podem indicar as otimizações a seguir.
 
 * Divida uma tabela colocando pontos de acesso intenso em uma tabela separada, ajudando a manter esses dados em memória.
 
-##### Ajuste o cache de consultas
+##### Ajuste o cache de consultas, quando disponível
 
-* Em alguns casos, o [cache de consultas](https://dev.mysql.com/doc/refman/5.7/en/query-cache.html) pode causar [problemas de desempenho](https://www.percona.com/blog/2016/10/12/mysql-5-7-performance-tuning-immediately-after-installation/).
+* Em versões e SGBDRs que oferecem esse recurso, o [cache de consultas](https://dev.mysql.com/doc/refman/5.7/en/query-cache.html) pode causar [problemas de desempenho](https://www.percona.com/blog/2016/10/12/mysql-5-7-performance-tuning-immediately-after-installation/).
 
 ##### Fontes e leituras complementares: otimização de SQL
 
@@ -1024,7 +1024,7 @@ Os resultados de benchmarks e profiling podem indicar as otimizações a seguir.
 <a id="nosql"></a>
 ### NoSQL
 
-NoSQL reúne modelos de armazenamento nos quais os dados podem ser representados em um **armazenamento chave-valor**, **armazenamento de documentos**, **armazenamento em colunas largas** ou **banco de dados de grafos**. Em geral, os dados são desnormalizados e os joins são realizados pelo código da aplicação. Muitos bancos NoSQL não oferecem transações ACID completas e favorecem a [consistência eventual](#consistência-eventual).
+NoSQL reúne modelos de armazenamento nos quais os dados podem ser representados em um **armazenamento chave-valor**, **armazenamento de documentos**, **armazenamento em colunas largas** ou **banco de dados de grafos**. Em geral, os dados são desnormalizados e os joins são realizados pelo código da aplicação. O suporte a transações ACID varia entre produtos e escopos de operação; muitos modelos NoSQL ainda favorecem a [consistência eventual](#consistência-eventual).
 
 A sigla **BASE** é frequentemente utilizada para descrever propriedades de bancos NoSQL. Em comparação com o [teorema CAP](#teorema-cap), BASE prioriza disponibilidade em vez de consistência.
 
@@ -1039,7 +1039,7 @@ Além de escolher entre [SQL ou NoSQL](#sql-ou-nosql), é importante compreender
 
 > Abstração: tabela hash
 
-Um armazenamento chave-valor normalmente oferece leituras e escritas em `O(1)` e costuma utilizar memória ou SSD como base. Esses armazenamentos podem manter as chaves em [ordem lexicográfica](https://en.wikipedia.org/wiki/Lexicographical_order), permitindo recuperar intervalos de chaves de maneira eficiente. Também podem associar metadados aos valores armazenados.
+Um armazenamento chave-valor pode oferecer leituras e escritas próximas de `O(1)`, conforme a estrutura e a implementação, e costuma utilizar memória ou SSD como base. Esses armazenamentos podem manter as chaves em [ordem lexicográfica](https://en.wikipedia.org/wiki/Lexicographical_order), permitindo recuperar intervalos de chaves de maneira eficiente. Também podem associar metadados aos valores armazenados.
 
 Armazenamentos chave-valor oferecem alto desempenho e são utilizados com frequência em modelos de dados simples ou em dados que mudam rapidamente, como uma camada de cache em memória. Como disponibilizam um conjunto limitado de operações, a complexidade é transferida para a camada de aplicação quando são necessárias operações adicionais.
 
@@ -1109,7 +1109,7 @@ Armazenamentos em colunas largas oferecem alta disponibilidade e elevada escalab
 
 Em um banco de dados de grafos, cada nó representa um registro e cada aresta representa uma relação entre dois nós. Esses bancos são otimizados para representar relações complexas que, em um modelo relacional, poderiam exigir muitas chaves estrangeiras ou relações muitos-para-muitos.
 
-Bancos de dados de grafos oferecem alto desempenho para modelos com relações complexas, como redes sociais. São relativamente recentes e ainda não são utilizados tão amplamente quanto outros modelos; por isso, pode ser mais difícil encontrar ferramentas e recursos de desenvolvimento. Muitos bancos de grafos são acessados por [APIs REST](#transferencia-de-estado-representacional-rest).
+Bancos de dados de grafos oferecem alto desempenho para modelos com relações complexas, como redes sociais. São relativamente recentes e ainda não são utilizados tão amplamente quanto outros modelos; por isso, pode ser mais difícil encontrar ferramentas e recursos de desenvolvimento. Muitos bancos de grafos também oferecem [APIs REST](#transferencia-de-estado-representacional-rest).
 
 ##### Fontes e leituras complementares: bancos de dados de grafos
 
@@ -1153,7 +1153,7 @@ Razões para utilizar **NoSQL**:
 * ausência de necessidade de joins complexos;
 * armazenamento de muitos terabytes ou petabytes de dados;
 * cargas de trabalho intensivas em dados;
-* throughput muito elevado de operações de entrada e saída — IOPS.
+* taxa muito elevada de operações de entrada e saída por segundo — IOPS.
 
 Exemplos de dados adequados a NoSQL:
 
@@ -1435,7 +1435,7 @@ Quando as filas crescem de maneira significativa, seu tamanho pode ultrapassar a
 <a id="protocolo-de-transferencia-de-hipertexto-http"></a>
 ### Protocolo de transferência de hipertexto — HTTP
 
-HTTP é um método para codificar e transportar dados entre um cliente e um servidor. É um protocolo de requisição e resposta: clientes enviam requisições, e servidores devolvem respostas com o conteúdo relevante e informações sobre o status de processamento. O HTTP é autocontido, permitindo que requisições e respostas atravessem diversos roteadores e servidores intermediários responsáveis por balanceamento de carga, cache, criptografia e compressão.
+HTTP é um protocolo para codificar e transportar dados entre um cliente e um servidor. É um protocolo de requisição e resposta: clientes enviam requisições, e servidores devolvem respostas com o conteúdo relevante e informações sobre o status de processamento. O HTTP é autocontido, permitindo que requisições e respostas atravessem diversos roteadores e servidores intermediários responsáveis por balanceamento de carga, cache, criptografia e compressão.
 
 Uma requisição HTTP básica é composta por um verbo, ou método, e um recurso, ou endpoint. A tabela a seguir apresenta verbos HTTP comuns:
 
@@ -1466,12 +1466,12 @@ HTTP é um protocolo da camada de aplicação que depende de protocolos de níve
   <i><a href="http://www.wildbunny.co.uk/blog/2012/10/09/how-to-make-a-multi-player-game-part-1/">Fonte: How to make a multiplayer game</a></i>
 </p>
 
-TCP é um protocolo orientado a conexão utilizado sobre uma [rede IP](https://en.wikipedia.org/wiki/Internet_Protocol). A conexão é estabelecida e encerrada por meio de um [handshake](https://en.wikipedia.org/wiki/Handshaking). O protocolo garante que todos os pacotes enviados cheguem ao destino na ordem original e sem corrupção por meio de:
+TCP é um protocolo orientado a conexão utilizado sobre uma [rede IP](https://en.wikipedia.org/wiki/Internet_Protocol). A conexão é estabelecida e encerrada por meio de um [handshake](https://en.wikipedia.org/wiki/Handshaking). O protocolo fornece um fluxo confiável e ordenado de bytes, detectando corrupção e retransmitindo dados quando necessário, por meio de:
 
 * números de sequência e [campos de checksum](https://en.wikipedia.org/wiki/Transmission_Control_Protocol#Checksum_computation) em cada pacote;
 * pacotes de [confirmação — acknowledgement](https://en.wikipedia.org/wiki/Acknowledgement_(data_networks)) e retransmissão automática.
 
-Quando o remetente não recebe uma resposta correta, ele reenvia os pacotes. Depois de vários timeouts, a conexão é encerrada. O TCP também implementa [controle de fluxo](https://en.wikipedia.org/wiki/Flow_control_(data)) e [controle de congestionamento](https://en.wikipedia.org/wiki/Network_congestion#Congestion_control). Essas garantias introduzem atrasos e normalmente resultam em uma transmissão menos eficiente do que a realizada por UDP.
+Quando o remetente não recebe uma resposta correta, ele reenvia os pacotes. Depois de vários timeouts, a conexão é encerrada. O TCP também implementa [controle de fluxo](https://en.wikipedia.org/wiki/Flow_control_(data)) e [controle de congestionamento](https://en.wikipedia.org/wiki/Network_congestion#Congestion_control). Essas garantias acrescentam overhead e podem aumentar a latência em comparação com UDP.
 
 Para manter throughput elevado, servidores web podem conservar um grande número de conexões TCP abertas, aumentando o consumo de memória. Manter muitas conexões abertas entre threads do servidor web e, por exemplo, um servidor [Memcached](https://memcached.org/) pode ser custoso. O [pool de conexões](https://en.wikipedia.org/wiki/Connection_pool) pode ajudar, assim como a adoção de UDP quando aplicável.
 
@@ -1521,7 +1521,7 @@ Prefira UDP a TCP quando:
   <i><a href="http://www.puncsky.com/blog/2016-02-13-crack-the-system-design-interview">Fonte: Crack the system design interview</a></i>
 </p>
 
-Em uma RPC, um cliente solicita a execução de um procedimento em outro espaço de endereçamento, normalmente em um servidor remoto. O procedimento é programado como se fosse uma chamada local, abstraindo do código cliente os detalhes da comunicação com o servidor. Chamadas remotas geralmente são mais lentas e menos confiáveis do que chamadas locais; por isso, é útil distingui-las. Entre os frameworks RPC conhecidos estão [Protobuf](https://developers.google.com/protocol-buffers/), [Thrift](https://thrift.apache.org/) e [Avro](https://avro.apache.org/docs/current/).
+Em uma RPC, um cliente solicita a execução de um procedimento em outro espaço de endereçamento, normalmente em um servidor remoto. O procedimento é programado como se fosse uma chamada local, abstraindo do código cliente os detalhes da comunicação com o servidor. Chamadas remotas geralmente são mais lentas e menos confiáveis do que chamadas locais; por isso, é útil distingui-las. Entre as tecnologias usadas em implementações RPC estão [Protocol Buffers](https://developers.google.com/protocol-buffers/), [Thrift](https://thrift.apache.org/) e [Avro](https://avro.apache.org/docs/current/).
 
 RPC utiliza o modelo de requisição e resposta:
 
@@ -1550,7 +1550,7 @@ Escolha uma biblioteca nativa, também chamada de SDK, quando:
 
 * você conhecer a plataforma de destino;
 * quiser controlar como sua lógica será acessada;
-* quiser controlar como os erros serão tratados fora da biblioteca;
+* quiser controlar como os erros serão expostos e tratados pelos consumidores da biblioteca;
 * desempenho e experiência do usuário final forem as principais prioridades.
 
 APIs HTTP que seguem **REST** são utilizadas com mais frequência como APIs públicas.
@@ -1565,12 +1565,12 @@ APIs HTTP que seguem **REST** são utilizadas com mais frequência como APIs pú
 <a id="transferencia-de-estado-representacional-rest"></a>
 ### Transferência de estado representacional — REST
 
-REST é um estilo arquitetural que estabelece um modelo cliente-servidor no qual o cliente atua sobre um conjunto de recursos administrados pelo servidor. O servidor fornece representações dos recursos e ações que permitem manipulá-los ou obter novas representações. Toda comunicação deve ser stateless e armazenável em cache.
+REST é um estilo arquitetural que estabelece um modelo cliente-servidor no qual o cliente atua sobre um conjunto de recursos administrados pelo servidor. O servidor fornece representações dos recursos e ações que permitem manipulá-los ou obter novas representações. Toda comunicação deve ser stateless, e cada resposta deve indicar se pode ou não ser armazenada em cache.
 
 Uma interface RESTful possui quatro características:
 
 * **Identificação dos recursos — URI no HTTP** — utilize a mesma URI independentemente da operação.
-* **Manipulação por representações — verbos no HTTP** — utilize verbos, cabeçalhos e corpo.
+* **Manipulação de recursos por representações — verbos no HTTP** — utilize verbos, cabeçalhos e corpo.
 * **Mensagens de erro autodescritivas — status da resposta HTTP** — utilize códigos de status em vez de criar mecanismos próprios.
 * **[HATEOAS](http://restcookbook.com/Basics/hateoas/) — hipermídia como motor do estado da aplicação** — as respostas incluem links que orientam o cliente sobre as ações e transições disponíveis.
 
@@ -1915,7 +1915,7 @@ Minhas informações de contato estão disponíveis na minha [página do GitHub]
 
 ## Status da tradução
 
-A tradução do conteúdo principal, a revisão estrutural e a validação automatizada de links e renderização foram concluídas. O documento aguarda revisão técnica e linguística por falantes nativos.
+A tradução do conteúdo principal, a revisão estrutural, duas passagens técnicas e linguísticas assistidas e a validação automatizada de links e renderização foram concluídas. O documento aguarda revisão técnica e linguística por falantes nativos.
 
 - [x] Índice e guia de estudos;
 - [x] abordagem para entrevistas de design de sistemas;
@@ -1932,6 +1932,7 @@ A tradução do conteúdo principal, a revisão estrutural e a validação autom
 - [x] seção em desenvolvimento, créditos, informações de contato e licença;
 - [x] revisão estrutural inicial, âncoras internas e comparação com o README original;
 - [x] primeira passagem técnica e linguística assistida;
+- [x] segunda passagem técnica e linguística assistida;
 - [ ] revisão técnica e linguística por falantes nativos;
 - [x] validação de links externos e renderização final.
 
