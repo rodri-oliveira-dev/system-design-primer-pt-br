@@ -205,6 +205,14 @@ Use como referência as decisões já registradas no PR de integração. Entre e
 | hash map | mapa de hash |
 | least recently used cache (LRU) | cache LRU — Least Recently Used |
 | call center | central de atendimento |
+| file sync service | serviço de sincronização de arquivos |
+| recommendation system | sistema de recomendação |
+| rate limiter | limitador de taxa |
+| real-world architecture | arquitetura do mundo real |
+| data processing | processamento de dados |
+| data store | armazenamento de dados |
+| file system | sistema de arquivos |
+| company engineering blog | blog de engenharia de empresa |
 | cache-aside | cache-aside |
 | write-through | write-through |
 | write-behind / write-back | write-behind / write-back |
