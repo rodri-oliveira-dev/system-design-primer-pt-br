@@ -1,0 +1,54 @@
+name: Update pt-BR README link
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+
+jobs:
+  update-link:
+    if: >-
+      github.event.issue.pull_request &&
+      github.event.comment.body == '/update-pt-br-readme-link'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout submission branch
+        uses: actions/checkout@v4
+        with:
+          ref: docs/pt-br-upstream-submission
+          fetch-depth: 0
+
+      - name: Update language selector
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('README.md')
+          text = path.read_text(encoding='utf-8')
+          old = '[Português do Brasil](https://github.com/donnemartin/system-design-primer/issues/40)'
+          new = '[Português do Brasil](README-pt-BR.md)'
+
+          count = text.count(old)
+          if count != 1:
+              raise SystemExit(f'Expected exactly one old pt-BR link, found {count}')
+
+          text = text.replace(old, new)
+          if text.count(new) != 1:
+              raise SystemExit('New pt-BR link validation failed')
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit and push
+        run: |
+          if git diff --quiet; then
+            echo 'No changes required.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add README.md
+          git commit -m 'docs: aponta seletor de idiomas para README pt-BR'
+          git push origin HEAD:docs/pt-br-upstream-submission
